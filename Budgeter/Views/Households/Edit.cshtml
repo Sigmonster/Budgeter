@@ -1,0 +1,121 @@
+﻿@model Budgeter.Models.Household
+
+@{
+    ViewBag.Title = "Edit Household - " + Model.Name.ToString();
+}
+<div class="row">
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    
+    <div class="form-horizontal col-md-8">
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.Id)
+
+        <div class="form-group">
+            <label class="control-label col-md-2" for="IsActive">Active</label>
+            <div class="col-md-10" style="padding-top:6px;">
+                    @Html.CheckBoxFor(m => Model.IsActive)
+                    @Html.ValidationMessageFor(model => model.IsActive, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        @*<div class="form-group">
+            @Html.LabelFor(model => model.TimeStamp, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.TimeStamp, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.TimeStamp, "", new { @class = "text-danger" })
+            </div>
+        </div>*@
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.HouseholdDetail.Description, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.HouseholdDetail.Description, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.HouseholdDetail.Description, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.OwnerUserId, "OwnerUserId", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownList("OwnerUserId", null, htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.OwnerUserId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2">Send Invitations</label>
+            <div class="col-md-10" id="addEmailParent">
+                <div class="row" id="addEmailRow">
+                    <a href="#" id="addDom">Add Email</a>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+
+}
+<div class="col-md-4">
+    <h4>Pending Invitations (registered & non-registered)</h4>
+    <div class="row">
+        @foreach (var item in Model.InvitedRegisteredUsers)
+        {
+            <div class="row" style="padding-bottom:5px;">
+                <div class="col-xs-11">
+                    <div class="col-md-6">
+                        @item.Email
+                    </div>
+                    <div class="col-md-6">
+                        @item.DisplayName
+                    </div>
+                </div>
+                <div class="col-xs-1">
+                    @using (Html.BeginForm("RevokeInvitationForm", "Saver", FormMethod.Post, new { role = "form" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        <input name="email" type="hidden" value="@item.Email">
+                        <button><i class="fa fa-close"></i></button>
+                    }
+                </div>
+            </div>
+        }
+        @foreach (var item in Model.InvitedNotRegisteredEmail)
+        {
+            <div class="row" style="padding-bottom:5px;">
+                <div class="col-xs-11">
+                    <div class="col-md-6">
+                        @item.Email
+                    </div>
+                    <div class="col-md-6">
+                        User Not Registered
+                    </div>
+                </div>
+                <div class="col-xs-1">
+                    @using (Html.BeginForm("RevokeInvitationForm", "Saver", FormMethod.Post, new { role = "form" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        <input name="email" type="hidden" value="@item.Email">
+                        <button type="submit"><i class="fa fa-close"></i></button>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+</div>
+</div>
+
+<div class="row">
+    @Html.ActionLink("Back to List", "Index")
+</div>

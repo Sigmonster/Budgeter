@@ -1,0 +1,39 @@
+﻿@using Budgeter.Models
+@model Household
+
+<div class="panel-heading">
+    <div class="text-center">
+        <h3>Household Accounts</h3>
+        <hr />
+    </div>
+</div>
+<div class="panel-wrapper collapse in">
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Account</th>
+                    <th>Balance</th>
+                    <th>Reconciled</th>
+                    <th>Options</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Accounts.Where(x=>x.IsActive == true))
+                {
+                    <tr>
+                        <td>@item.Name</td>
+                        <td>@item.Balance</td>
+                        <td>@item.ReconciledBalance</td>
+                        <td>
+                            <a title="" tabindex="0" data-placement="auto bottom" data-toggle="popover" data-trigger="focus" id="account-Options"class="btn btn-default btn-outline waves-effect waves-light" data-content='<ul role="menu" class="dropdown-menu" style="display:inline;"><li><a href="@Url.Action("Edit","Accounts", new {id = item.Id})">Edit</a></li><li><a href="@Url.Action("Details","Accounts", new {id = item.Id})">Go to</a></li><li><a href="@Url.Action("Delete","Accounts", new {id = item.Id})">Delete</a></li></ul><br/>' data-html="true"><i class="fa fa-gear m-r-5"></i></a>
+
+                           
+                        </td>
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+    </div>
+</div>

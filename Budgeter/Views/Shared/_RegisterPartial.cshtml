@@ -1,0 +1,55 @@
+﻿@using Budgeter.Models
+@model RegisterViewModel
+
+@{
+    Layout = null;
+}
+
+@using (Html.BeginForm("Register", "Account", FormMethod.Post, new { @class = "form-horizontal", role = "form", id = "registerform" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary("", new { @class = "text-danger" })
+    <h3 class="box-title m-b-20">Sign Up for a New Account!</h3>
+    <div class="form-group text-center m-t-20">
+        <div class="col-xs-12">
+            @Html.TextBoxFor(m => m.Email, new { @class = "form-control",type ="email", placeholder = "Email", required = "" })
+        </div>
+    </div>
+    <div class="form-group m-t-20">
+        <div class="col-xs-6">
+            @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control", @placeholder = "First Name", required = "" })
+        </div>
+        <div class="col-xs-6">
+            @Html.TextBoxFor(m => m.LastName, new { @class = "form-control", @placeholder = "Last Name", required = "" })
+        </div>
+    </div>
+    <div class="form-group text-center m-t-20">
+        <div class="col-xs-12">
+            @Html.PasswordFor(m => m.Password, new { @class = "form-control", placeholder = "Password", required = "" })
+        </div>
+    </div>
+    <div class="form-group text-center m-t-20">
+        <div class="col-xs-12">
+            @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control", placeholder = "Confirm Password", required = "" })
+        </div>
+    </div>
+    <div class="form-group text-center m-t-20">
+        <div class="col-xs-12">
+            <div class="checkbox checkbox-primary p-t-0">
+                <p><b>Note -</b> An Admin must add a project to your account before you can view projects/tickets.</p>
+            </div>
+        </div>
+    </div>
+    <div class="form-group text-center m-t-20">
+        <div class="col-xs-12">
+            <button class="btn btn-info btn-lg btn-block text-uppercase waves-effect waves-light" form="registerform" type="submit">Sign Up</button>
+        </div>
+    </div>
+    <div class="form-group m-b-0">
+        <div class="col-sm-12 text-center">
+            <p>
+                Already have an account? <a href="javascript:void(0)" id="to-login-from-register" class="text-dark text-primary m-l-5 pull-right"><i class="fa fa-arrow-left m-r-5"></i> Back to login.</a>
+            </p>
+        </div>
+    </div>
+}

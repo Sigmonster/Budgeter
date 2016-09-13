@@ -1,0 +1,92 @@
+﻿@using Budgeter.Models
+@model Household
+
+
+    <div class="panel-heading">
+        <div class="text-center">
+            <h3>Household Invitations</h3>
+            <hr />
+        </div>
+    </div>
+
+<div class="panel-wrapper collapse in">
+    <div class="row">
+        <div class="col-xs-12 col-md-11 center-block">
+            <div class="row">
+                <div class="pull-left">
+                    <a href="#" id="addUserBtn" class="tooltip-success" data-toggle="tooltip" data-placement="top" title="Invite Users to Household!" data-original-title="Click again to send more than one invite." style="font-size: 16px; color: #00c292;"><i class="fa fa-plus-circle" style="font-size: 25px;"></i></a>
+                </div>
+                <div class="pull-right">
+                    <a href="#" id="btn-ClearInviteDom" class="addUsersElement"><i class="fa fa-times-circle-o" style="font-size: 25px; color: #fb9678;"></i></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xs-12 col-md-11 center-block p-t-10">
+            @using (Html.BeginForm("InviteEmails", "Saver", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+                <div id="addUserEmailInputRow">
+                </div>
+
+                    <div class="row p-t-10">
+                        <div class="pull-right">
+                            <input type="submit" value="Send" id="btn-SendInvites" class="fcbtn btn btn-success btn-outline btn-1d addUsersElement" />
+                        </div>
+                    </div>
+            }
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Email</th>
+                    @*<th>Email</th>*@
+                    <th>User Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.InvitedRegisteredUsers)
+                {
+                    <tr>
+                        <td>
+                            @item.Email
+                        </td>
+                        <td>
+                            @item.DisplayName
+                        </td>
+
+                        <td>
+                            @using (Html.BeginForm("RevokeInvitationPartialForm", "Saver", FormMethod.Post, new { role = "form" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                <input name="email" type="hidden" value="@item.Email">
+                                <button><i class="fa fa-close"></i></button>
+                            }
+                        </td>
+                    </tr>
+                }
+                @foreach (var item in Model.InvitedNotRegisteredEmail)
+                {
+                    <tr>
+                        <td>
+                            @item.Email
+                        </td>
+                        <td>
+                            User Not Registered
+                        </td>
+                        <td>
+                            @using (Html.BeginForm("RevokeInvitationPartialForm", "Saver", FormMethod.Post, new { role = "form", id = "RevokeInvite-" + @item.Id }))
+                            {
+                                <input name="email" id="EmailInvite-@item.Id" type="hidden" value="@item.Email">
+                                <button type="submit" class="RevokeInviteButton btn-danger" id="@item.Id"><i class="fa fa-close"></i></button>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

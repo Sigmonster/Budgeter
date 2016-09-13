@@ -1,0 +1,79 @@
+﻿@using Budgeter.Models
+@model Household
+@{
+    ViewBag.Title = "MyHousehold";
+}
+<div class="container-MyHousehold">
+    <div class="row">
+        <div class="col-md-4 col-xs-12">
+            <div class="panel panel-default" id="MyHousehold-Members-Wrapper">
+                <div class="panel-heading">
+                    <div class="text-center">
+                        <h3>MyHousehold Options</h3>
+                        <hr />
+                    </div>
+                </div>
+                <div class="panel-wrapper collapse in">
+                    <div class="col-xs-12 col-md-11 center-block p-t-10">
+                        @if (Model != null)
+                        {
+                            <h3>Name: @Model.Name</h3>
+                        }
+
+
+                        <a href="@Url.Action("Create", "Households")" class="fcbtn btn btn-success btn-outline btn-1d">Create New</a>
+                        @if (Model != null)
+                        {
+                            <a href="@Url.Action("Edit", "Households", new { id = Model.Id })" class="fcbtn btn btn-info btn-outline btn-1d">Edit</a>
+                            <a href="#" title="Are you sure you want to leave?" data-placement="auto top" data-toggle="popover" class="fcbtn btn btn-danger btn-outline btn-1d leave-household-btn" data-content='If you leave this household and you are not the Head of Household, you will have to be invited back by an active member.<br/ ><br/ > <form action="/Saver/LeaveHousehold" method="post">@Html.AntiForgeryToken()<button href="#" class="fcbtn btn btn-danger btn-outline btn-block btn-1d">I Understand, Leave Household</button></form> <br/ >' data-html="true">Leave</a>
+
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 col-xs-12">
+            <div class="panel panel-default" id="MyHousehold-Members-Wrapper">
+                @Html.Partial("_MyHouseholdMembersPartial", @Model.Members.ToList())
+            </div>
+        </div>
+        <div class="col-md-4 col-xs-12">
+            <div class="panel panel-default">
+                @Html.Partial("_MyHouseholdInvitationsPartial", Model)
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4 col-xs-12">
+            <div class="panel panel-default" id="myHousehold-Accounts-Panel">
+                @Html.Partial("_MyHouseholdAccountsPartial", Model)
+            </div>
+        </div>
+
+
+
+    </div>
+</div>
+<script>
+
+</script>
+
+@*@section scripts {
+    <script>
+        function SubmitFormz(email) {
+            console.log(email);
+            
+            $.ajax({
+                type: "POST",
+                url: "/Saver/RevokeInvitationPartialForm/?email=" + email,
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                success: function (data) {
+                    console.log("test");
+                    $('#MyHousehold-Invitations-Wrapper').empty();
+                    $('#MyHousehold-Invitations-Wrapper').html(data);
+                }
+            });
+        };
+    </script>    
+}*@
