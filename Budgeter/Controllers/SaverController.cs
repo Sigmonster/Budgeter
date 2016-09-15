@@ -168,7 +168,7 @@ namespace Budgeter.Controllers
         //return RedirectToAction("Error", "Saver", new { error = "Error Message Here..." });
         public ActionResult Error(string error)
         {
-            var currentUser = db.Users.Find(User.Identity.GetUserId());
+            var currentUser = GetCurrentUser();
             var errormsg = new StringBuilder();
             errormsg.Append("Error Details: " + error + " User:" + currentUser.Email.ToString());
             ViewBag.ErrorMessage = (string)errormsg.ToString();

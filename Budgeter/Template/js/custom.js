@@ -319,10 +319,17 @@ $(document).ready(function() {
             //$("#addUserSubmitRow").empty();
             //$('.addUsersElement').hide();
         })
+       
+        /*Create Transaction*/
+
+        $(function () {
+            $(".date-picker").datepicker({ dateformat: "mm/dd/yy"});
+        });
+
         /*Invitations*/
 
-
         $('.leave-household-btn').popover({ html: true, container: '#MyHousehold-Members-Wrapper' });
+
         //$('#account-Options').popover({ html: true, container: '#MyHousehold-Members-Wrapper' });
 
         //function CreateModel() {

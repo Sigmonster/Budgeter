@@ -1,11 +1,10 @@
-﻿@using Budgeter.Models
-@model List<Transaction>
+﻿@model IEnumerable<Budgeter.Models.Transaction>
 
 @{
-    ViewBag.Title = "Index1";
+    ViewBag.Title = "Index";
 }
 
-<h2>Index1</h2>
+<h2>Index</h2>
 
 <p>
     @Html.ActionLink("Create New", "Create")
@@ -13,34 +12,32 @@
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.First().Account.Name)
+            @Html.DisplayNameFor(model => model.Account.Name)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.First().Category.Name)
+            @Html.DisplayNameFor(model => model.Category.Name)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.First().EnteredBy.FirstName)
+            @Html.DisplayNameFor(model => model.EnteredBy.FirstName)
+        </th>
+
+        <th>
+            @Html.DisplayNameFor(model => model.IsActive)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.First().IsActive)
+            @Html.DisplayNameFor(model => model.Date)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.First().Date)
+            @Html.DisplayNameFor(model => model.Description)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.First().Description)
+            @Html.DisplayNameFor(model => model.Amount)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.First().Amount)
+            @Html.DisplayNameFor(model => model.IsReconciled)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.First().IsReconciled)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.First().IsExpense)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.First().IsVoid)
+            @Html.DisplayNameFor(model => model.ReconciledAmount)
         </th>
         <th></th>
     </tr>
@@ -55,6 +52,9 @@
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.EnteredBy.FirstName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.TransactionType.Name)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.IsActive)
@@ -72,10 +72,7 @@
             @Html.DisplayFor(modelItem => item.IsReconciled)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.IsExpense)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.IsVoid)
+            @Html.DisplayFor(modelItem => item.ReconciledAmount)
         </td>
         <td>
             @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |

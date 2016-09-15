@@ -3,62 +3,84 @@
 @{
     ViewBag.Title = "Home Page";
 }
-
-
-    <h1>Index Page!!!!!</h1>
-
-
-<div class="col-md-4">
-    <h3>Household Invitations</h3>
-    @foreach (var item in Model.currentUser.Invitations)
-    {
-        <div class="row" style="border-bottom:solid 1px black;"></div>
-        <div class="col-md-10 center-block">
-            <div class="row" style="font-size:25px;"><i class="fa fa-users"></i><i class="fa fa-times-circle"></i>
-                <div class="pull-right">
-                    <a href="#" data-toggle="modal" data-target="#myModal_@item.Id"><i class="icon-options"></i></a>
-                </div>
-            </div> 
-            <div class="row"><b>@item.Name</b></div>
-            <div class="row"><b>Description: </b>@item.HouseholdDetail.Description</div>
-            <div class="row"><b>Head of Household: </b>@item.OwnerUser.DisplayName</div>
-        </div>
-        <div id="myModal_@item.Id" class="modal fade" role="dialog">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title">Household Invitation Options</h4>
-                    </div>
-                    <div class="modal-body">
-                        @using (Html.BeginForm("InvitationJoinForm", "Saver", FormMethod.Post))
-                        {
-                            <input type="text" name="Id" value="@item.Id" hidden="hidden" />
-                            @Html.AntiForgeryToken()
-                            @Html.ValidationSummary("", new { @class = "text-danger" })
-                            <p class="large-header">Do you wish to join or decline this household invitation?</p>
-                            <div class="col-md-4" style="font-weight:bold;">Household:</div><p>@item.Name</p>
-                            <div class="col-md-4" style="font-weight:bold;">Description:</div><p>@item.HouseholdDetail.Description</p>
-                            <div class="col-md-4" style="font-weight:bold;">Head of Household:</div><p> @item.OwnerUser.DisplayName</p>
-                            <p class="text-muted">Note - you can only be in one household at a time. If you're in a household, you must leave it before joining another.</p>
-                            <div class="row col-md-10 center-block">
-                                <div class="pull-left">
-                                    <input type="submit" value="Join" class="fcbtn btn btn-outline btn-success btn-1d" name="InvitationJoinForm" formaction="Saver/InvitationJoinForm" />
-                                </div>
-                                <div class="pull-right">
-                                    <input type="submit" value="Decline" class="fcbtn btn btn-outline btn-danger btn-1d" name="InvitationDeclineForm" formaction="Saver/InvitationDeclineForm" />
-                                </div>
-                            </div>
-                        }
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="fcbtn btn btn-outline btn-info btn-1d" data-dismiss="modal">Close</button>
+<div class="container-MyHousehold">
+    <div class="row">
+        <div class="col-md-4 col-xs-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <div class="text-center">
+                        <h3>User Index View</h3>
+                        <hr />
                     </div>
                 </div>
-
+                <div class="panel-wrapper collapse in">
+                    <a href="@Url.Action("Create", "Households")" class="fcbtn btn btn-success btn-outline btn-1d">Create New Household</a>
+                </div>
             </div>
         </div>
-        <div class="row"style="border-bottom:solid 1px black;"></div>
-    }
-</div>
 
+        <div class="col-md-4 col-xs-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <div class="text-center">
+                        <h3>My Invitations</h3>
+                        <hr />
+                    </div>
+                </div>
+                <div class="panel-wrapper collapse in">
+                    @foreach (var item in Model.currentUser.Invitations)
+            {
+                        <div class="row" style="border-bottom:solid 1px black;"></div>
+                        <div class="col-md-10 center-block">
+                            <div class="row" style="font-size:25px;">
+                                <i class="fa fa-users"></i><i class="fa fa-times-circle"></i>
+                                <div class="pull-right">
+                                    <a href="#" data-toggle="modal" data-target="#myModal_@item.Id"><i class="icon-options"></i></a>
+                                </div>
+                            </div>
+                            <div class="row"><b>@item.Name</b></div>
+                            <div class="row"><b>Description: </b>@item.HouseholdDetail.Description</div>
+                            <div class="row"><b>Head of Household: </b>@item.OwnerUser.DisplayName</div>
+                        </div>
+                        <div id="myModal_@item.Id" class="modal fade" role="dialog">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                        <h4 class="modal-title">Household Invitation Options</h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        @using (Html.BeginForm("InvitationJoinForm", "Saver", FormMethod.Post))
+                                        {
+                                            <input type="text" name="Id" value="@item.Id" hidden="hidden" />
+                                            @Html.AntiForgeryToken()
+                                            @Html.ValidationSummary("", new { @class = "text-danger" })
+                                            <p class="large-header">Do you wish to join or decline this household invitation?</p>
+                                            <div class="col-md-4" style="font-weight:bold;">Household:</div><p>@item.Name</p>
+                                            <div class="col-md-4" style="font-weight:bold;">Description:</div><p>@item.HouseholdDetail.Description</p>
+                                            <div class="col-md-4" style="font-weight:bold;">Head of Household:</div><p> @item.OwnerUser.DisplayName</p>
+                                            <p class="text-muted">Note - you can only be in one household at a time. If you're in a household, you must leave it before joining another.</p>
+                                            <div class="row col-md-10 center-block">
+                                                <div class="pull-left">
+                                                    <input type="submit" value="Join" class="fcbtn btn btn-outline btn-success btn-1d" name="InvitationJoinForm" formaction="Saver/InvitationJoinForm" />
+                                                </div>
+                                                <div class="pull-right">
+                                                    <input type="submit" value="Decline" class="fcbtn btn btn-outline btn-danger btn-1d" name="InvitationDeclineForm" formaction="Saver/InvitationDeclineForm" />
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="fcbtn btn btn-outline btn-info btn-1d" data-dismiss="modal">Close</button>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="row" style="border-bottom:solid 1px black;"></div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

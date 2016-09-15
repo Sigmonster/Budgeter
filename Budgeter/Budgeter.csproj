@@ -2017,6 +2017,32 @@
     <Content Include="Template\plugins\images\users\salman.jpg" />
     <Content Include="Template\plugins\images\users\sonu.jpg" />
     <Content Include="Template\plugins\images\users\varun.jpg" />
+    <Content Include="Template\plugins\jquery-ui-1.12.0.custom\AUTHORS.txt" />
+    <Content Include="Template\plugins\jquery-ui-1.12.0.custom\external\jquery\jquery.js" />
+    <Content Include="Template\plugins\jquery-ui-1.12.0.custom\images\ui-bg_glass_45_0078ae_1x400.png" />
+    <Content Include="Template\plugins\jquery-ui-1.12.0.custom\images\ui-bg_glass_55_f8da4e_1x400.png" />
+    <Content Include="Template\plugins\jquery-ui-1.12.0.custom\images\ui-bg_glass_75_79c9ec_1x400.png" />
+    <Content Include="Template\plugins\jquery-ui-1.12.0.custom\images\ui-bg_gloss-wave_45_e14f1c_500x100.png" />
+    <Content Include="Template\plugins\jquery-ui-1.12.0.custom\images\ui-bg_gloss-wave_50_6eac2c_500x100.png" />
+    <Content Include="Template\plugins\jquery-ui-1.12.0.custom\images\ui-bg_gloss-wave_75_2191c0_500x100.png" />
+    <Content Include="Template\plugins\jquery-ui-1.12.0.custom\images\ui-bg_inset-hard_100_fcfdfd_1x100.png" />
+    <Content Include="Template\plugins\jquery-ui-1.12.0.custom\images\ui-icons_0078ae_256x240.png" />
+    <Content Include="Template\plugins\jquery-ui-1.12.0.custom\images\ui-icons_056b93_256x240.png" />
+    <Content Include="Template\plugins\jquery-ui-1.12.0.custom\images\ui-icons_d8e7f3_256x240.png" />
+    <Content Include="Template\plugins\jquery-ui-1.12.0.custom\images\ui-icons_e0fdff_256x240.png" />
+    <Content Include="Template\plugins\jquery-ui-1.12.0.custom\images\ui-icons_f5e175_256x240.png" />
+    <Content Include="Template\plugins\jquery-ui-1.12.0.custom\images\ui-icons_f7a50d_256x240.png" />
+    <Content Include="Template\plugins\jquery-ui-1.12.0.custom\images\ui-icons_fcd113_256x240.png" />
+    <Content Include="Template\plugins\jquery-ui-1.12.0.custom\index.html" />
+    <Content Include="Template\plugins\jquery-ui-1.12.0.custom\jquery-ui.css" />
+    <Content Include="Template\plugins\jquery-ui-1.12.0.custom\jquery-ui.js" />
+    <Content Include="Template\plugins\jquery-ui-1.12.0.custom\jquery-ui.min.css" />
+    <Content Include="Template\plugins\jquery-ui-1.12.0.custom\jquery-ui.min.js" />
+    <Content Include="Template\plugins\jquery-ui-1.12.0.custom\jquery-ui.structure.css" />
+    <Content Include="Template\plugins\jquery-ui-1.12.0.custom\jquery-ui.structure.min.css" />
+    <Content Include="Template\plugins\jquery-ui-1.12.0.custom\jquery-ui.theme.css" />
+    <Content Include="Template\plugins\jquery-ui-1.12.0.custom\jquery-ui.theme.min.css" />
+    <Content Include="Template\plugins\jquery-ui-1.12.0.custom\LICENSE.txt" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -2898,6 +2924,8 @@
     <Content Include="Views\Transactions\Delete.cshtml" />
     <Content Include="Views\Transactions\Details.cshtml" />
     <Content Include="Views\Transactions\Edit.cshtml" />
+    <Content Include="Views\Transactions\Index.old.cshtml" />
+    <Content Include="Template\plugins\jquery-ui-1.12.0.custom\package.json" />
     <Content Include="Views\Transactions\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>

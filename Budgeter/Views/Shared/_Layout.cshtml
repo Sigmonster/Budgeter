@@ -10,6 +10,7 @@
     <title>Universal Saver - @ViewBag.Title</title>
     <!-- Bootstrap Core CSS -->
     <link href="~/Template/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="~/Template/plugins/jquery-ui-1.12.0.custom/jquery-ui.min.css" rel="stylesheet" />
     <!-- Menu CSS -->
     <link href="~/Template/plugins/bower_components/sidebar-nav/dist/sidebar-nav.min.css" rel="stylesheet">
     <!-- animation CSS -->
@@ -43,7 +44,7 @@
                     </li>
                 </ul>
                 <ul class="nav navbar-top-links navbar-right pull-right">
-                    <li><a class="btn btn-block nav-quick-btn"><i class="fa fa-plus"></i> Quick Add</a></li>
+                    <li><a href="@Url.Action("Create","Transactions")"class="btn btn-block nav-quick-btn"><i class="fa fa-plus"></i> Quick Add</a></li>
                     <li class="dropdown" style="">
                         <a class="dropdown-toggle profile-pic" data-toggle="dropdown" href="#"> <img src="~/Template/img/blank-profile-picture.svg" alt="user-img" class="img-circle" style="width: 36px;"><b class="hidden-xs">@Html.Partial("_LoginPartial")</b> </a>
                         <ul class="dropdown-menu dropdown-user animated flipInY">
@@ -236,7 +237,7 @@
     <!-- /#wrapper -->
     <!-- jQuery -->
     <script src="~/Template/plugins/bower_components/jquery/dist/jquery.min.js"></script>
-
+    <script src="~/Template/plugins/jquery-ui-1.12.0.custom/jquery-ui.min.js"></script>
     <!-- Bootstrap Core JavaScript -->
     <script src="~/Template/bootstrap/dist/js/bootstrap.min.js"></script>
     <!-- Menu Plugin JavaScript -->

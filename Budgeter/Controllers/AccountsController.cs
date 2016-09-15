@@ -51,7 +51,7 @@ namespace Budgeter.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Name,Balance")] Account account)
+        public ActionResult Create([Bind(Include = "Name,Balance")] AccountCreateVM account)
         {
             if (ModelState.IsValid)
             {
@@ -59,17 +59,43 @@ namespace Budgeter.Controllers
                 var currentHousehold = db.Household.Find(currentUser.HouseholdId);
                 var newAccount = new Account();
                 newAccount.Name = account.Name;
-                newAccount.ReconciledBalance = (decimal)account.Balance;
-                newAccount.Balance = (decimal)account.Balance;
+
+                //newAccount.ReconciledBalance = (decimal)account.Balance;
+                //newAccount.Balance = (decimal)account.Balance;// Set an automatic transaction create.
                 newAccount.IsActive = true;
                 newAccount.HouseholdId = currentHousehold.Id;
-
                 db.Account.Add(newAccount);
                 db.SaveChanges();
+                if (account.Balance != 0)
+                {
+                    var newTransaction = new Transaction();
+                    newTransaction.AccountId = newAccount.Id;
+                    newTransaction.Amount = account.Balance;
+                    newTransaction.CategoryId = db.Category.FirstOrDefault(x => x.Name == "Transfer").Id;
+                    newTransaction.Date = DateTimeOffset.UtcNow;
+                    newTransaction.Description = "Account Starting Amount";
+                    newTransaction.EnteredById = currentUser.Id;
+                    newTransaction.IsActive = true;
+                    newTransaction.IsExpense = (account.Balance == Math.Abs(account.Balance) * -1) ? true : false;
+                    newTransaction.IsReconciled = true;
+                    newTransaction.IsVoid = false;
+                    db.Transaction.Add(newTransaction);
+                    db.SaveChanges();
+                    //if (account.Balance == account.Balance * -1)//checks user input
+                    //{
+                    //    newTransaction.IsExpense = true;
+                    //}
+                    //else
+                    //{
+                    //    newTransaction.IsExpense = false;
+                    //}
+
+
+                }
                 return RedirectToAction("Index");
             }
 
-            ViewBag.HouseholdId = new SelectList(db.Household, "Id", "Name", account.HouseholdId);
+            //ViewBag.HouseholdId = new SelectList(db.Household, "Id", "Name", account.HouseholdId);
             return View(account);
         }
 
@@ -109,8 +135,8 @@ namespace Budgeter.Controllers
                     if (currentAccount.Balance != account.Balance)
                     {
                         differenceInBalance = currentBalance - account.Balance;
-                        currentAccount.Balance = account.Balance;
-                        currentAccount.ReconciledBalance = currentAccount.ReconciledBalance - differenceInBalance;
+                        //currentAccount.Balance = account.Balance; //make this work with the new calculated property.
+                        //currentAccount.ReconciledBalance = currentAccount.ReconciledBalance - differenceInBalance;
                     }
                     currentAccount.Name = account.Name;
                     currentAccount.IsActive = account.IsActive;

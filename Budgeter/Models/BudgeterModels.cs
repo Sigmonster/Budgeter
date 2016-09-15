@@ -22,7 +22,6 @@ namespace Budgeter.Models
             //this.Transactions = new HashSet<Transaction>();
             //this.TransactionType = new HashSet<TransactionType>();
             this.InvitedNotRegisteredEmail = new HashSet<InvitedButNotRegisteredEmail>();
-            this.Categories = new HashSet<Category>();
         }
         public int Id { get; set; }//PK
         public bool IsActive { get; set; }
@@ -46,7 +45,6 @@ namespace Budgeter.Models
         [InverseProperty("Invitations")]
         public virtual ICollection<ApplicationUser> InvitedRegisteredUsers { get; set; }
         public virtual ICollection<Account> Accounts { get; set; }
-        public virtual ICollection<Category> Categories { get; set; }
         public virtual ICollection<Budget> Budgets { get; set; }
         //public virtual ICollection<BudgetItem> BudgetItems { get; set; }
         //public virtual ICollection<Transaction> Transactions { get; set; }
@@ -99,10 +97,32 @@ namespace Budgeter.Models
         public int Id { get; set; }
         public bool IsActive { get; set; }
         public string Name { get; set; }
+        //[Range(double.MinValue, double.MaxValue)]
+        [NotMapped]
+        public decimal Balance
+        {
+            get
+            {
+                return Transactions.Where(t => t.IsActive == true && t.IsVoid == false).Sum(x => x.Amount);
+            }
+            private set
+            {
+
+            }
+        }
+        [NotMapped]
         [Range(double.MinValue, double.MaxValue)]
-        public decimal Balance { get; set; }
-        [Range(double.MinValue, double.MaxValue)]
-        public decimal ReconciledBalance { get; set; }
+        public decimal ReconciledBalance
+        {
+            get
+            {
+            return Transactions.Where(t => t.IsActive == true && t.IsReconciled == true && t.IsVoid == false).Sum(x => x.Amount);
+            }
+            private set
+            {
+            }
+
+        }
 
         //FKs
         public int HouseholdId { get; set; }
@@ -124,23 +144,26 @@ namespace Budgeter.Models
 
         public int Id { get; set; }
         public bool IsActive { get; set; }
+        [DisplayFormat(DataFormatString = "{0:g}", ApplyFormatInEditMode = true)]
         public DateTimeOffset Date { get; set; }
         [StringLength(150, ErrorMessage ="Description cannot exceed 150 characters.")]
         public string Description { get; set; }
         [Range(double.MinValue, double.MaxValue)]
         public decimal Amount { get; set; }
         public bool IsReconciled { get; set; }
+        public bool IsExpense { get; set; }
+        public bool IsVoid { get; set; }
         [Range(double.MinValue, double.MaxValue)]
-        public decimal ReconciledAmount { get; set; }
+        //public decimal ReconciledAmount { get; set; }
 
         //FKs
-        public int TransactionTypeId { get; set; }
+        //public int TransactionTypeId { get; set; }//Remove
         public int CategoryId { get; set; }
         public string EnteredById { get; set; }
         public int AccountId { get; set; }
 
         //Virtual Properties
-        public virtual TransactionType TransactionType { get; set; }
+        //public virtual TransactionType TransactionType { get; set; }//Remove
         public virtual Category Category { get; set; }
         public virtual ApplicationUser EnteredBy { get; set; }
         public virtual Account Account { get; set; }
@@ -155,41 +178,38 @@ namespace Budgeter.Models
         public Category()
         {
             this.Transactions = new HashSet<Transaction>();
-            this.Households = new HashSet<Household>();
+            this.BudgetItems = new HashSet<BudgetItem>();
         }
 
         public int Id { get; set; }
         public bool IsActive { get; set; }
         public string Name { get; set; }
-        //FKs
-        public int HouseholdId { get; set; }
-
-        //Virtual Properties
-        public virtual ICollection<Household> Households { get; set; }// One to one
         public virtual ICollection<Transaction> Transactions { get; set; }
+        public virtual ICollection<BudgetItem> BudgetItems { get; set; }
+
     }
 
     //###########################################################
     //################### TransactionType Model #################
     //###########################################################
-    public class TransactionType
-    {
-        public TransactionType()
-        {
-            this.Transactions = new HashSet<Transaction>();
-        }
+    //public class TransactionType
+    //{
+    //    public TransactionType()
+    //    {
+    //        this.Transactions = new HashSet<Transaction>();
+    //    }
 
-        public int Id { get; set; }
-        [StringLength(25, ErrorMessage = "Description cannot exceed 25 characters.")]
-        public string Name { get; set; }
+    //    public int Id { get; set; }
+    //    [StringLength(25, ErrorMessage = "Description cannot exceed 25 characters.")]
+    //    public string Name { get; set; }
 
-        //FKs
-        //public int HouseholdId { get; set; }
+    //    //FKs
+    //    //public int HouseholdId { get; set; }
 
-        //Virtual Properties
-        //public virtual Household Household { get; set; }// One to one
-        public ICollection<Transaction> Transactions { get; private set; }
-    }
+    //    //Virtual Properties
+    //    //public virtual Household Household { get; set; }// One to one
+    //    public ICollection<Transaction> Transactions { get; private set; }
+    //}
 
     //###########################################################
     //###################### Budget Model #######################

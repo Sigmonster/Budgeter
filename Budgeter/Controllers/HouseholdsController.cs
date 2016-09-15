@@ -66,7 +66,8 @@ namespace Budgeter.Controllers
                     household.Members.Add(currentUser);
                     db.Household.Add(household);
                     db.SaveChanges();
-                    return RedirectToAction("Index");
+                    return RedirectToAction("MyHousehold", "Saver");
+
                 }
                 else
                 {

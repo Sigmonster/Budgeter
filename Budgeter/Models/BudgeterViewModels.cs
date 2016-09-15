@@ -15,8 +15,8 @@ using Budgeter.Helpers;
 namespace Budgeter.Models
 {
     //###########################################################
-    //##################### Household Model #####################
-    public class HouseholdEditVM
+    //##################### Household VMs #######################
+        public class HouseholdEditVM
     {
         public int Id { get; set; }//PK
         public bool IsActive { get; set; }
@@ -47,10 +47,22 @@ namespace Budgeter.Models
 
     }
     //###########################################################
-    //##################### UserDashboardVM #####################
+    //##################### EmailInvitationsVM ##################
     public class EmailInvitationsVM
     {
         public string[] emailInvites { get; set; }
+    }
+
+    //###########################################################
+    //##################### Household VMs #######################
+    public class AccountCreateVM
+    {
+        [Required]
+        [StringLength(30)]
+        public string Name { get; set; }
+        [Required]
+        [Range(double.MinValue, double.MaxValue)]
+        public decimal Balance { get; set; }
     }
 
 }

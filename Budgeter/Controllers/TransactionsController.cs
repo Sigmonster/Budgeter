@@ -7,6 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using Budgeter.Models;
+using Microsoft.AspNet.Identity;
 
 namespace Budgeter.Controllers
 {
@@ -17,8 +18,12 @@ namespace Budgeter.Controllers
         // GET: Transactions
         public ActionResult Index()
         {
-            var transaction = db.Transaction.Include(t => t.Account).Include(t => t.Category).Include(t => t.EnteredBy).Include(t => t.TransactionType);
-            return View(transaction.ToList());
+            var currentUser = GetCurrentUser();
+            var household = db.Household.Find(currentUser.HouseholdId);
+
+            //var transaction = db.Transaction.Include(t => t.Account).Include(t => t.Category).Include(t => t.EnteredBy);
+            var dbtransactionList = db.Transaction.Where(x=>x.Account.HouseholdId == household.Id && x.IsActive ==true).ToList();
+            return View(dbtransactionList);
         }
 
         // GET: Transactions/Details/5
@@ -39,11 +44,17 @@ namespace Budgeter.Controllers
         // GET: Transactions/Create
         public ActionResult Create()
         {
-            ViewBag.AccountId = new SelectList(db.Account, "Id", "Name");
-            ViewBag.CategoryId = new SelectList(db.Category, "Id", "Name");
-            ViewBag.EnteredById = new SelectList(db.Users, "Id", "FirstName");
-            ViewBag.TransactionTypeId = new SelectList(db.TransactionType, "Id", "Name");
-            return View();
+            var currentUser = GetCurrentUser();
+            var household = db.Household.Find(currentUser.HouseholdId);
+            var model = new Transaction();
+            model.Date = DateTimeOffset.UtcNow;
+            ViewBag.AccountId = new SelectList(household.Accounts, "Id", "Name");
+            ViewBag.CategoryId = new SelectList(db.Category.ToList(), "Id", "Name");
+            //ViewBag.EnteredById = new SelectList(db.Users, "Id", "FirstName");
+            //ViewBag.TransactionTypeId = new SelectList(db.TransactionType, "Id", "Name");
+            
+
+            return View(model);
         }
 
         // POST: Transactions/Create
@@ -51,19 +62,53 @@ namespace Budgeter.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,IsActive,Date,Description,Amount,IsReconciled,ReconciledAmount,TransactionTypeId,CategoryId,EnteredById,AccountId")] Transaction transaction)
+        public ActionResult Create([Bind(Include = "Id,IsActive,Date,Description,Amount,IsReconciled,ReconciledAmount,TransactionTypeId,CategoryId,EnteredById,AccountId,IsExpense")] Transaction transaction)
         {
-            if (ModelState.IsValid)
+            var currentUser = GetCurrentUser();
+            var household = db.Household.Find(currentUser.HouseholdId);
+            var transactionAccount = db.Account.Find(transaction.AccountId);
+
+            if (ModelState.IsValid && transactionAccount.HouseholdId == household.Id)//protects againsts front end manipulation.
             {
-                db.Transaction.Add(transaction);
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                if (transaction.Amount != 0)
+                {
+                    var newTransaction = new Transaction();
+                    if (transaction.IsExpense == true && transaction.Amount == Math.Abs(transaction.Amount) || transaction.Amount != Math.Abs(transaction.Amount))//checks for user input selection errors.
+                    {
+                        newTransaction.Amount = Math.Abs(transaction.Amount) * -1;//removed.ReconciledAMount
+                        newTransaction.IsExpense = true;
+                    }
+                    else
+                    {
+                        newTransaction.Amount = transaction.Amount;//removed.ReconciledAMount
+                        transaction.IsExpense = false;                   
+                    }
+                    
+                    newTransaction.AccountId = transaction.AccountId;
+                    newTransaction.CategoryId = transaction.CategoryId;
+                    newTransaction.Date = transaction.Date;
+                    newTransaction.Description = transaction.Description;
+                    newTransaction.EnteredById = currentUser.Id;
+                    newTransaction.IsActive = true;
+                    newTransaction.IsReconciled = transaction.IsReconciled;
+                    newTransaction.IsVoid = false;
+
+                    db.Transaction.Add(newTransaction);
+                    db.SaveChanges();
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    ViewBag.AccountId = new SelectList(household.Accounts, "Id", "Name");
+                    ViewBag.CategoryId = new SelectList(db.Category.ToList(), "Id", "Name");
+                    ModelState.AddModelError("Amount", "Error With Transaction Amount!");
+                    return View(transaction);
+                }
+
             }
 
             ViewBag.AccountId = new SelectList(db.Account, "Id", "Name", transaction.AccountId);
             ViewBag.CategoryId = new SelectList(db.Category, "Id", "Name", transaction.CategoryId);
-            ViewBag.EnteredById = new SelectList(db.Users, "Id", "FirstName", transaction.EnteredById);
-            ViewBag.TransactionTypeId = new SelectList(db.TransactionType, "Id", "Name", transaction.TransactionTypeId);
             return View(transaction);
         }
 
@@ -81,8 +126,6 @@ namespace Budgeter.Controllers
             }
             ViewBag.AccountId = new SelectList(db.Account, "Id", "Name", transaction.AccountId);
             ViewBag.CategoryId = new SelectList(db.Category, "Id", "Name", transaction.CategoryId);
-            ViewBag.EnteredById = new SelectList(db.Users, "Id", "FirstName", transaction.EnteredById);
-            ViewBag.TransactionTypeId = new SelectList(db.TransactionType, "Id", "Name", transaction.TransactionTypeId);
             return View(transaction);
         }
 
@@ -101,8 +144,7 @@ namespace Budgeter.Controllers
             }
             ViewBag.AccountId = new SelectList(db.Account, "Id", "Name", transaction.AccountId);
             ViewBag.CategoryId = new SelectList(db.Category, "Id", "Name", transaction.CategoryId);
-            ViewBag.EnteredById = new SelectList(db.Users, "Id", "FirstName", transaction.EnteredById);
-            ViewBag.TransactionTypeId = new SelectList(db.TransactionType, "Id", "Name", transaction.TransactionTypeId);
+
             return View(transaction);
         }
 
@@ -130,6 +172,13 @@ namespace Budgeter.Controllers
             db.Transaction.Remove(transaction);
             db.SaveChanges();
             return RedirectToAction("Index");
+        }
+
+        //######## Controller Helpers ########
+        public ApplicationUser GetCurrentUser()
+        {
+            var user = db.Users.Find(User.Identity.GetUserId());
+            return user;
         }
 
         protected override void Dispose(bool disposing)
