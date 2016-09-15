@@ -273,16 +273,8 @@ $(document).ready(function() {
     $('.login-box').css(function () {
         var boxWidth = this.width();
 
+    });
 
-        /*My Household Section*/
-        $(".leave-household-btn").click(function () {
-            $(".popover-content").each(function () {
-                var text = $(this).html();
-                $(this).html(text.replace('LeaveLinkHere!', '<a href="@Url.Action("Edit", "Households", new { id = Model.Id })"class="fcbtn btn btn-info btn-outline btn-1d">Edit</a>'));
-            })
-        })
-       
-    })
 
 /*Edit Household, Add Email Input Fields*/
     $(document).ready(function () {
@@ -327,8 +319,27 @@ $(document).ready(function() {
         });
 
         /*Invitations*/
+        /*My Household Section*/
+        $(".leave-household-btn").click(function () {
+            $(".popover-content").each(function () {
+                var text = $(this).html();
+                $(this).html(text.replace('LeaveLinkHere!', '<a href="@Url.Action("Edit", "Households", new { id = Model.Id })"class="fcbtn btn btn-info btn-outline btn-1d">Edit</a>'));
+            })
+        })
 
-        $('.leave-household-btn').popover({ html: true, container: '#MyHousehold-Members-Wrapper' });
+ 
+
+        $('.leave-household-btn').popover({ html: true, container: '#MyHousehold-Options-Wrapper' });
+        $('.popover-info-anchor').popover({ html: true, container: '#myHousehold-Accounts-Panel .popover-container', trigger: "hover" });
+        $('.account-options').popover({ html: true, container: '#myHousehold-Accounts-tablebody', trigger: "click" });
+        //$('.popover-info-anchor').hover(function () {
+
+        //});
+        $('#myHousehold-Accounts-Panel .popover').css("width", "276px");
+        //$('.account-options').popover("toggle");
+
+        
+        //$('.popover-info-anchor').removeClass('btn').addClass('scroll').removeAttr('href');
 
         //$('#account-Options').popover({ html: true, container: '#MyHousehold-Members-Wrapper' });
 

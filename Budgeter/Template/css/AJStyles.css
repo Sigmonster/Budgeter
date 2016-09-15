@@ -5,6 +5,11 @@
     margin-left: auto;
     margin-right: auto;
 }
+.infoIcon{
+    color: #0073bc;
+    font-size: 16px;
+}
+
 
 
 /*Layout Page*/
@@ -168,7 +173,7 @@ overflow:hidden
     border-bottom:none;
 
 }
-#MyHousehold-Members-Wrapper .popover-title{
+#MyHousehold-Options-Wrapper .popover-title{
     background-color:#fb9678;
     color:white;
     font-weight:bolder;
@@ -177,20 +182,45 @@ overflow:hidden
 .addUsersElement{
     display:none;
 }
-
-#myHousehold-Accounts-Panel .popover ul{
-
-}
-#myHousehold-Accounts-Panel .popover-content{
+/*Accounts Dropdown-Popover Hack - TableBody*/
+#myHousehold-Accounts-tablebody .popover-content{
     padding: 0;
     height: 0;
     bottom: 10px;
     position: relative;
     right: 20px;
 }
-#myHousehold-Accounts-Panel .popover .arrow{
+#myHousehold-Accounts-tablebody .popover .arrow{
     display:none;
 }
+/*Accounts Popover - Table Head*/
+.popover-info-anchor:hover{
+    cursor:pointer;
+}
+#myHousehold-Accounts-Panel .popover-title{
+    background-color: #03a9f3;
+    color:white;
+    font-weight:bolder;
+}
+#myHousehold-Accounts-Panel .popover-container .popover{
+    width: 276px;
+}
+.info-anchor-paneltext{
+    padding-top:5px;
+
+}
+
+.acc-name-td{
+    width: 172px;
+}
+.acc-table .infoIcon{
+    color: #0073bc;
+    font-size: 16px;
+    padding-top: 3px;
+}
+
+
+
 
 
 /*Edit Household Section*/
