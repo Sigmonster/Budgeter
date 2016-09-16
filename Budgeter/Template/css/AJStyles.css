@@ -182,7 +182,7 @@ overflow:hidden
 .addUsersElement{
     display:none;
 }
-/*Accounts Dropdown-Popover Hack - TableBody*/
+/*Accounts Dropdown-Popover TableBody*/
 #myHousehold-Accounts-tablebody .popover-content{
     padding: 0;
     height: 0;
@@ -218,8 +218,31 @@ overflow:hidden
     font-size: 16px;
     padding-top: 3px;
 }
+/*Start Account Manage Section*/
+.isExpense-True{
+    font-weight:400;
+    color:#fb9678;
 
+}
+.isExpense-False{
+    font-weight:400;
+    color:#00c292;
 
+}
+
+/*Transaction Options Dropdown-Popover TableBody*/
+#disp-transactions-body .popover-content{
+    padding: 0;
+    height: 0;
+    bottom: 10px;
+    position: relative;
+    right: 139px;
+}
+#disp-transactions-body .popover .arrow{
+    display:none;
+}
+
+/*End Account Manage Section*/
 
 
 

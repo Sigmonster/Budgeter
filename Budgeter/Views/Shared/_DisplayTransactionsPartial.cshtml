@@ -1,0 +1,63 @@
+﻿@using Budgeter.Models
+@model List<Transaction>
+
+@{
+
+}
+
+
+<div class="table-responsive">
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr class="ticket-tbl-row">
+                <th>Date</th>
+                <th>EnteredBy</th>
+                <th>Category</th>
+                <th>Processed</th>
+                <th>Description</th>
+                <th>Amount</th>
+            </tr>
+        </thead>
+        <tbody class="" id="disp-transactions-body">
+            @foreach (var item in Model)
+            {
+                <tr class="voided-@item.IsVoid">
+                    <td>@item.Date.ToString("M/dd/yy")</td>
+                    <td>@item.EnteredBy.DisplayName</td>
+                    <td>@item.Category.Name</td>
+                    <td>
+                        @if (item.IsReconciled == true)
+                        {
+                            @:Processed
+                        }
+                        @if (item.IsReconciled == false)
+                        {
+                            @:Pending
+                        }
+                    </td>
+                    <td>@item.Description</td>
+                    <td class="isExpense-@item.IsExpense.ToString()">
+                        @if (item.IsExpense == true)
+                        {
+                            @:( 
+                            @(item.Amount * -1)@:)
+                        }
+                        @if (item.IsExpense == false)
+                        {
+                           
+                           @item.Amount
+                        }
+                    </td>
+                    <td>
+                        @{
+                        //TODO:Fix forms for button clicks, Edit(modal), Delete(display inactive transactions in another tab), Void, IsReconciled/Processed, Go to. All only reload Partial Views with AJAX.
+                        }
+                        <a title="" tabindex="0" data-placement="auto bottom" data-toggle="popover" data-trigger="focus" class="btn btn-default btn-outline waves-effect waves-light transaction-options" data-content='<ul role="menu" class="dropdown-menu" style="display:inline;"><li><a href="@Url.Action("Edit","Accounts", new {id = item.Id})">Edit</a></li><li><a href="@Url.Action("Details","Accounts", new {id = item.Id})">Go to</a></li><li><a href="@Url.Action("Delete","Accounts", new {id = item.Id})">Delete</a></li><li><a href="@Url.Action("Create", "Transactions")" class="">Add Transaction</a></li></ul><br/>' data-html="true"><i class="fa fa-gear m-r-5"></i></a>
+                    </td>
+                </tr>
+
+            }
+        </tbody>
+    </table>
+    <br />
+</div>

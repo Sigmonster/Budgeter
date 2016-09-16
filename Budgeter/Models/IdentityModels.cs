@@ -57,7 +57,7 @@ namespace Budgeter.Models
         public DbSet<Transaction> Transaction { get; set; }
         public DbSet<Category> Category { get; set; }
         //public DbSet<TransactionType> TransactionType { get; set; }
-        public DbSet<Budget> Budget { get; set; }
+        //public DbSet<Budget> Budget { get; set; }
         public DbSet<BudgetItem> BudgetItem { get; set; }
 
     }

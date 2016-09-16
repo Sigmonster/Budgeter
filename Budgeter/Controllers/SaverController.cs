@@ -2,20 +2,11 @@
 using Budgeter.Models;
 using System.Text;
 using Microsoft.AspNet.Identity;
-using System;
 using Budgeter.Helpers;
 using System.Linq;
-using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Entity;
-using System.Linq;
-using System.Net;
-using System.Web;
-using System.Web.Mvc;
-using Budgeter.Models;
-using Microsoft.AspNet.Identity;
-using Budgeter.Helpers;
+using System;
 
 namespace Budgeter.Controllers
 {
@@ -162,6 +153,105 @@ namespace Budgeter.Controllers
             return RedirectToAction("Index", "Home");
         }
 
+        //#########################################
+        //######## Account Manage Section #########
+        public ActionResult AccountManage(int? accounts)
+        {
+            var currentUser = GetCurrentUser();
+            var household = db.Household.Find(currentUser.HouseholdId);
+            var accountManageVM = new AccountManageVM();
+            accountManageVM.Household = household;
+            ViewBag.Accounts = new SelectList(household.Accounts, "Id", "Name");
+            if (accounts != null)
+            {
+                var account = db.Account.Find(accounts);
+                accountManageVM.Account = account;
+
+                if (household.Accounts.Contains(account))
+                {
+                    var modelTransaction = new Transaction();
+                    modelTransaction.Date = DateTime.Now;
+                    modelTransaction.AccountId = account.Id;
+                    modelTransaction.Account = account;
+                    ViewBag.AccountId = new SelectList(household.Accounts, "Id", "Name");
+                    ViewBag.CategoryId = new SelectList(household.Categories, "Id", "Name");
+                    ViewBag.CurrentHousehold = household;
+
+                    if (household.BudgetItems.Count() > 0)
+                    {
+                        ViewBag.BudgetItemId = new SelectList(household.BudgetItems, "Id", "Name");
+                    }
+
+                    accountManageVM.Transaction = modelTransaction;
+
+                    return View(accountManageVM);
+                }
+                else
+                {
+                    return RedirectToAction("Error", "Saver", new { error = "Error Loading Page" });
+                }
+
+            }
+            return View(accountManageVM);
+        }
+
+        //######## Create Transaction #########
+        //POST ACTION
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult CreateTransaction([Bind(Include = "Id,IsActive,Date,Description,Amount,IsReconciled,ReconciledAmount,TransactionTypeId,CategoryId,EnteredById,AccountId,IsExpense")] Transaction transaction)
+        {
+            var currentUser = GetCurrentUser();
+            var household = db.Household.Find(currentUser.HouseholdId);
+            var transactionAccount = db.Account.Find(transaction.AccountId);
+
+            if (ModelState.IsValid && transactionAccount.HouseholdId == household.Id)//protects againsts front end manipulation. Account/Household Comparison
+            {
+                if (transaction.Amount != 0)
+                {
+                    var newTransaction = new Transaction();
+                    if (transaction.IsExpense == true && transaction.Amount == Math.Abs(transaction.Amount) || transaction.Amount != Math.Abs(transaction.Amount))//checks for user input selection errors.
+                    {
+                        newTransaction.Amount = Math.Abs(transaction.Amount) * -1;//removed.ReconciledAMount
+                        newTransaction.IsExpense = true;
+                    }
+                    else
+                    {
+                        newTransaction.Amount = transaction.Amount;//removed.ReconciledAMount
+                        transaction.IsExpense = false;
+                    }
+
+                    newTransaction.AccountId = transaction.AccountId;
+                    newTransaction.CategoryId = transaction.CategoryId;
+                    newTransaction.Date = transaction.Date;
+                    newTransaction.Description = transaction.Description;
+                    newTransaction.EnteredById = currentUser.Id;
+                    newTransaction.IsActive = true;
+                    newTransaction.IsReconciled = transaction.IsReconciled;
+                    newTransaction.IsVoid = false;
+
+                    db.Transaction.Add(newTransaction);
+                    db.SaveChanges();
+                    return RedirectToAction("AccountManage", "Saver", new { accounts = transactionAccount.Id });
+                }
+                else
+                {
+                    ViewBag.AccountId = new SelectList(household.Accounts, "Id", "Name");
+                    ViewBag.CategoryId = new SelectList(db.Category.ToList(), "Id", "Name");
+                    ModelState.AddModelError("Amount", "Error With Transaction Amount!");
+                    return RedirectToAction("Error", "Saver", new { error = "Error With Transaction Data, If you feel you reached this in error please contact support." });
+                }
+
+            }
+
+            ViewBag.AccountId = new SelectList(db.Account, "Id", "Name", transaction.AccountId);
+            ViewBag.CategoryId = new SelectList(db.Category, "Id", "Name", transaction.CategoryId);
+
+            return RedirectToAction("AccountManage", "Saver", new { accounts = transactionAccount.Id });
+
+        }
+        //######## End Account Manage Section #########
+        //#############################################
 
 
         //######## Error ActionResults ########

@@ -64,5 +64,12 @@ namespace Budgeter.Models
         [Range(double.MinValue, double.MaxValue)]
         public decimal Balance { get; set; }
     }
-
+    //##############################################################
+    //##################### AccountManage VM #######################
+    public class AccountManageVM
+    {
+        public Household Household { get; set; }
+        public Account Account { get; set; }
+        public Transaction Transaction { get; set; }
+    }
 }

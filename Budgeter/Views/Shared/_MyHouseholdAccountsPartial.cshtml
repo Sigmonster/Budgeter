@@ -39,7 +39,7 @@
                         <td class="text-center">@item.Balance</td>
                         <td class="text-center">@item.ReconciledBalance</td>
                         <td>
-                            <a title="" tabindex="0" data-placement="auto bottom" data-toggle="popover" data-trigger="focus" class="btn btn-default btn-outline waves-effect waves-light account-options" data-content='<ul role="menu" class="dropdown-menu" style="display:inline;"><li><a href="@Url.Action("Edit","Accounts", new {id = item.Id})">Edit</a></li><li><a href="@Url.Action("Details","Accounts", new {id = item.Id})">Go to</a></li><li><a href="@Url.Action("Delete","Accounts", new {id = item.Id})">Delete</a></li></ul><br/>' data-html="true"><i class="fa fa-gear m-r-5"></i></a>
+                            <a title="" tabindex="0" data-placement="auto bottom" data-toggle="popover" data-trigger="focus" class="btn btn-default btn-outline waves-effect waves-light account-options" data-content='<ul role="menu" class="dropdown-menu" style="display:inline;"><li><a href="@Url.Action("Edit","Accounts", new {id = item.Id})">Edit</a></li><li><a href="@Url.Action("Details","Accounts", new {id = item.Id})">Go to</a></li><li><a href="@Url.Action("Delete","Accounts", new {id = item.Id})">Delete</a></li><li><a href="@Url.Action("Create", "Transactions")" class="">Add Transaction</a></li></ul><br/>' data-html="true"><i class="fa fa-gear m-r-5"></i></a>
                         </td>
                     </tr>
                 }

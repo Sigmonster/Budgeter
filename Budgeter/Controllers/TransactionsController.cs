@@ -42,22 +42,54 @@ namespace Budgeter.Controllers
         }
 
         // GET: Transactions/Create
-        public ActionResult Create()
+        public ActionResult Create(int? id)
         {
             var currentUser = GetCurrentUser();
             var household = db.Household.Find(currentUser.HouseholdId);
             var model = new Transaction();
             model.Date = DateTimeOffset.UtcNow;
+            ViewData["Household"] = household;
+
+            if(id != null)
+            {
+                var account = db.Account.Find(id);
+                if (household.Accounts.Contains(account))
+                {
+                    model.AccountId = account.Id;
+                    model.Account = account;
+                    ViewBag.AccountId = new SelectList(household.Accounts, "Id", "Name");
+                    ViewBag.CategoryId = new SelectList(household.Categories, "Id", "Name");
+                    ViewBag.CurrentHousehold = household;
+                    if (household.BudgetItems.Count() > 0)
+                    {
+                        ViewBag.BudgetItemId = new SelectList(household.BudgetItems, "Id", "Name");
+                    }
+                    return View(model);
+                }
+                else
+                {
+                    return RedirectToAction("Error", "Saver", new { error = "Error when trying to create a Transaction." });
+                }
+
+            }
+
+            if (household.BudgetItems.Count() > 0)
+            {
+                ViewBag.BudgetItemId = new SelectList(household.BudgetItems, "Id", "Name");
+            }
             ViewBag.AccountId = new SelectList(household.Accounts, "Id", "Name");
-            ViewBag.CategoryId = new SelectList(db.Category.ToList(), "Id", "Name");
-            //ViewBag.EnteredById = new SelectList(db.Users, "Id", "FirstName");
-            //ViewBag.TransactionTypeId = new SelectList(db.TransactionType, "Id", "Name");
-            
+            ViewBag.CategoryId = new SelectList(household.Categories, "Id", "Name");
+            ViewBag.CurrentHousehold = household;
 
             return View(model);
+            //ViewBag.EnteredById = new SelectList(db.Users, "Id", "FirstName");
+            //ViewBag.TransactionTypeId = new SelectList(db.TransactionType, "Id", "Name");
+
+
+
         }
 
-       Import Transactions CSV! 
+       //Import Transactions CSV! 
 
         // POST: Transactions/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
@@ -117,6 +149,9 @@ namespace Budgeter.Controllers
         // GET: Transactions/Edit/5
         public ActionResult Edit(int? id)
         {
+            var currentUser = GetCurrentUser();
+            var household = db.Household.Find(currentUser.HouseholdId);
+
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -127,7 +162,7 @@ namespace Budgeter.Controllers
                 return HttpNotFound();
             }
             ViewBag.AccountId = new SelectList(db.Account, "Id", "Name", transaction.AccountId);
-            ViewBag.CategoryId = new SelectList(db.Category, "Id", "Name", transaction.CategoryId);
+            ViewBag.CategoryId = new SelectList(household.Categories, "Id", "Name", transaction.CategoryId);
             return View(transaction);
         }
 

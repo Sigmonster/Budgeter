@@ -63,6 +63,12 @@ namespace Budgeter.Controllers
                     household.Members.Add(currentUser);
                     household.HouseholdDetail.Created = timestamp;
                     household.IsActive = true;
+                    //household.Categories.Add()
+                    var defaultCategories = db.Category.Where(c => c.IsDefault == true).ToList();
+                    foreach(var item in defaultCategories)
+                    {
+                        household.Categories.Add(item);
+                    }
                     household.Members.Add(currentUser);
                     db.Household.Add(household);
                     db.SaveChanges();

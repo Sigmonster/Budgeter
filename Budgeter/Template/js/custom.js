@@ -286,6 +286,24 @@ $(document).ready(function() {
         });
     });
 
+    /*Manage Account Section*/
+    $(document).ready(function () {
+        $("#IsExpense").change(function () {
+            var value = $(this).val();
+            if (value == "false") {
+                $("#category-form-group").hide();
+                $("#CategoryId").val("18");
+            }
+            else {
+                $("#CategoryId").val("");
+                $("#category-form-group").show();
+            }
+        })
+
+        //Transaction Options
+        $('.transaction-options').popover({ html: true, container: '#disp-transactions-body', trigger: "click" });
+
+    });
 /*MyHousehold Members Partial*/
     $(document).ready(function () {
         var counter = 0;
@@ -338,19 +356,5 @@ $(document).ready(function() {
         $('#myHousehold-Accounts-Panel .popover').css("width", "276px");
         //$('.account-options').popover("toggle");
 
-        
-        //$('.popover-info-anchor').removeClass('btn').addClass('scroll').removeAttr('href');
-
-        //$('#account-Options').popover({ html: true, container: '#MyHousehold-Members-Wrapper' });
-
-        //function CreateModel() {
-        //    var model = {
-        //        Id: $('#idOfInputBoxThatHoldsModelIdValue').val(),
-        //        Name: $('#idOfInputBoxThatHoldsModelNameValue').val(),
-        //        Description: $('#idOfInputBoxThatHoldsModelDescriptionValue').val()
-        //    };
-
-        //    return model;
-        //}
 
     });

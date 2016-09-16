@@ -2927,6 +2927,9 @@
     <Content Include="Views\Transactions\Index.old.cshtml" />
     <Content Include="Template\plugins\jquery-ui-1.12.0.custom\package.json" />
     <Content Include="Views\Transactions\Index.cshtml" />
+    <Content Include="Views\Shared\_DisplayTransactionsPartial.cshtml" />
+    <Content Include="Views\Shared\_AddTransactionPartial.cshtml" />
+    <Content Include="Views\Saver\AccountManage.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

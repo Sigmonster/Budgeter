@@ -53,13 +53,12 @@ namespace Budgeter.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Name,Balance")] AccountCreateVM account)
         {
-            if (ModelState.IsValid)
+            if (ModelState.IsValid && account.Name.Length <= 20 && account.Name.Length >=5)
             {
                 var currentUser = GetCurrentUser();
                 var currentHousehold = db.Household.Find(currentUser.HouseholdId);
                 var newAccount = new Account();
                 newAccount.Name = account.Name;
-
                 //newAccount.ReconciledBalance = (decimal)account.Balance;
                 //newAccount.Balance = (decimal)account.Balance;// Set an automatic transaction create.
                 newAccount.IsActive = true;
@@ -71,7 +70,7 @@ namespace Budgeter.Controllers
                     var newTransaction = new Transaction();
                     newTransaction.AccountId = newAccount.Id;
                     newTransaction.Amount = account.Balance;
-                    newTransaction.CategoryId = db.Category.FirstOrDefault(x => x.Name == "Transfer").Id;
+                    newTransaction.CategoryId = db.Category.FirstOrDefault(x => x.Name == "Income").Id;
                     newTransaction.Date = DateTimeOffset.UtcNow;
                     newTransaction.Description = "Account Starting Amount";
                     newTransaction.EnteredById = currentUser.Id;

@@ -17,38 +17,32 @@ namespace Budgeter.Models
             this.Members = new HashSet<ApplicationUser>();
             this.InvitedRegisteredUsers = new HashSet<ApplicationUser>();
             this.Accounts = new HashSet<Account>();
-            this.Budgets = new HashSet<Budget>();
-            //this.BudgetItems = new HashSet<BudgetItem>();
-            //this.Transactions = new HashSet<Transaction>();
-            //this.TransactionType = new HashSet<TransactionType>();
+            this.BudgetItems = new HashSet<BudgetItem>();
+            //this.Budgets = new HashSet<Budget>();
+            this.Categories = new HashSet<Category>();
             this.InvitedNotRegisteredEmail = new HashSet<InvitedButNotRegisteredEmail>();
         }
         public int Id { get; set; }//PK
         public bool IsActive { get; set; }
         [Required]
-        [MaxLength(20, ErrorMessage ="Household Name must between 5 and 20 characters"), MinLength(5,ErrorMessage = "Household Name must between 5 and 20 characters")]
+        [StringLength(20, ErrorMessage ="Household Name must between 5 and 20 characters"), MinLength(5,ErrorMessage = "Household Name must between 5 and 20 characters")]
         public string Name { get; set; }
         public HouseholdDetails HouseholdDetail { get; set; }
 
         //Forigen Keys
         public string OwnerUserId { get; set; }//FK
 
-
-        //Forigen Keys Tables
+        //Virtual Properties
         [InverseProperty("HouseholdsOwned")]
         public virtual ApplicationUser OwnerUser { get; set; }//Holds Associated FK OwnerUser
-
-
-        //Holds Multiple Associated Records
         [InverseProperty("Household")]
         public virtual ICollection<ApplicationUser> Members { get; set; }
         [InverseProperty("Invitations")]
         public virtual ICollection<ApplicationUser> InvitedRegisteredUsers { get; set; }
+        public virtual ICollection<Category> Categories { get; set; }
         public virtual ICollection<Account> Accounts { get; set; }
-        public virtual ICollection<Budget> Budgets { get; set; }
-        //public virtual ICollection<BudgetItem> BudgetItems { get; set; }
-        //public virtual ICollection<Transaction> Transactions { get; set; }
-        //public virtual ICollection<TransactionType> TransactionType { get; set; }
+        public virtual ICollection<BudgetItem> BudgetItems { get; set; }
+        //public virtual ICollection<Budget> Budgets { get; set; }
         public virtual ICollection<InvitedButNotRegisteredEmail> InvitedNotRegisteredEmail { get; set; }
     }
     //######Household Details######
@@ -60,7 +54,7 @@ namespace Budgeter.Models
         [Column("Updated")]
         public DateTimeOffset? Updated { get; set; }
         [Required]
-        [MaxLength(30, ErrorMessage = "Household Description must be less than 30 characters long")]
+        [StringLength(20, ErrorMessage = "Household Description must between 5 and 20 characters"), MinLength(5, ErrorMessage = "Household Description must between 5 and 20 characters")]
         [Column("Description", TypeName="nvarchar")]
         public string Description { get; set; }
     }
@@ -76,6 +70,7 @@ namespace Budgeter.Models
 
         public int Id { get; set; }
         public string Email { get; set; }
+        public DateTime DateSent { get; set; }
 
         //FKs
         public int HouseholdId { get; set; }
@@ -96,6 +91,7 @@ namespace Budgeter.Models
 
         public int Id { get; set; }
         public bool IsActive { get; set; }
+        [StringLength(20, ErrorMessage = "Account Name must between 5 and 20 characters"), MinLength(5, ErrorMessage = "Account Name must between 5 and 20 characters")]
         public string Name { get; set; }
         //[Range(double.MinValue, double.MaxValue)]
         [NotMapped]
@@ -107,7 +103,6 @@ namespace Budgeter.Models
             }
             private set
             {
-
             }
         }
         [NotMapped]
@@ -139,31 +134,27 @@ namespace Budgeter.Models
     {
         public Transaction()
         {
-
         }
 
         public int Id { get; set; }
-        public bool IsActive { get; set; }
         [DisplayFormat(DataFormatString = "{0:g}", ApplyFormatInEditMode = true)]
         public DateTimeOffset Date { get; set; }
-        [StringLength(150, ErrorMessage ="Description cannot exceed 150 characters.")]
+        [StringLength(25, ErrorMessage = "Transaction Description must between 5 and 20 characters"), MinLength(2, ErrorMessage = "Transaction Description must between 2 and 20 characters")]
         public string Description { get; set; }
         [Range(double.MinValue, double.MaxValue)]
         public decimal Amount { get; set; }
+        public bool IsActive { get; set; }
         public bool IsReconciled { get; set; }
         public bool IsExpense { get; set; }
         public bool IsVoid { get; set; }
-        [Range(double.MinValue, double.MaxValue)]
-        //public decimal ReconciledAmount { get; set; }
+
 
         //FKs
-        //public int TransactionTypeId { get; set; }//Remove
         public int CategoryId { get; set; }
         public string EnteredById { get; set; }
         public int AccountId { get; set; }
 
         //Virtual Properties
-        //public virtual TransactionType TransactionType { get; set; }//Remove
         public virtual Category Category { get; set; }
         public virtual ApplicationUser EnteredBy { get; set; }
         public virtual Account Account { get; set; }
@@ -179,60 +170,72 @@ namespace Budgeter.Models
         {
             this.Transactions = new HashSet<Transaction>();
             this.BudgetItems = new HashSet<BudgetItem>();
+            this.Households = new HashSet<Household>();
         }
 
         public int Id { get; set; }
         public bool IsActive { get; set; }
+        public bool IsDefault { get; set; }
+        public bool IsExpense { get; set; }
+        [Required]
+        [StringLength(25, ErrorMessage = "Category Name must between 4 and 25 characters"), MinLength(4, ErrorMessage = "Category Name must between 4 and 25 characters")]
         public string Name { get; set; }
+        public virtual ICollection<Household> Households { get; set; }
         public virtual ICollection<Transaction> Transactions { get; set; }
         public virtual ICollection<BudgetItem> BudgetItems { get; set; }
 
     }
 
+  
     //###########################################################
-    //################### TransactionType Model #################
+    //###################### Budget Model #######################
     //###########################################################
-    //public class TransactionType
+    //public class Budget
     //{
-    //    public TransactionType()
+    //    public Budget()
     //    {
+    //        this.BudgetItems = new HashSet<BudgetItem>();
     //        this.Transactions = new HashSet<Transaction>();
     //    }
 
     //    public int Id { get; set; }
-    //    [StringLength(25, ErrorMessage = "Description cannot exceed 25 characters.")]
+    //    public bool IsActive { get; set; }
+    //    [Required]
+    //    [StringLength(20, ErrorMessage = "Budget Name must between 5 and 20 characters"), MinLength(5, ErrorMessage = "Budget Name must between 5 and 20 characters")]
     //    public string Name { get; set; }
+    //    [NotMapped]
+    //    public decimal BudgetItemsTotal
+    //    {
+    //        get
+    //        {
+    //            return BudgetItems.Where(t => t.IsActive == true ).Sum(x => x.Amount);
+    //        }
+    //        private set
+    //        {
+
+    //        }
+    //    }
+    //    [NotMapped]
+    //    public decimal TransactionsItemsTotal
+    //    {
+    //        get
+    //        {
+    //            return Transactions.Where(t => t.IsActive == true && t.IsVoid == false).Sum(x => x.Amount);
+    //        }
+    //        private set
+    //        {
+
+    //        }
+    //    }
 
     //    //FKs
-    //    //public int HouseholdId { get; set; }
+    //    public int HouseholdId { get; set; }
 
     //    //Virtual Properties
-    //    //public virtual Household Household { get; set; }// One to one
-    //    public ICollection<Transaction> Transactions { get; private set; }
+    //    public virtual Household Household { get; set; }
+    //    public virtual ICollection<Transaction> Transactions { get; private set; }
+    //    public virtual ICollection<BudgetItem> BudgetItems { get; private set; }
     //}
-
-    //###########################################################
-    //###################### Budget Model #######################
-    //###########################################################
-    public class Budget
-    {
-        public Budget()
-        {
-            this.BudgetItems = new HashSet<BudgetItem>();
-        }
-
-        public int Id { get; set; }
-        public bool IsActive { get; set; }
-        [StringLength(25, ErrorMessage = "Description cannot exceed 25 characters.")]
-        public string Name { get; set; }
-
-        //FKs
-        public int HouseholdId { get; set; }
-
-        //Virtual Properties
-        public virtual Household Household { get; set; }
-        public virtual ICollection<BudgetItem> BudgetItems { get; private set; }
-    }
 
     //###########################################################
     //##################### BudgetItem Model #####################
@@ -243,15 +246,16 @@ namespace Budgeter.Models
         public bool IsActive { get; set; }
         [Range(double.MinValue, double.MaxValue)]
         public decimal Amount { get; set; }
+        [Required]
+        [StringLength(20, ErrorMessage = "Budget Item Name must between 5 and 20 characters"), MinLength(5, ErrorMessage = "Budget Item Name must between 5 and 20 characters")]
+        public string Name { get; set; }
 
         //FKs
         public int CategoryId { get; set; }
-        public int BudgetId { get; set; }
-        //public int HouseholdId { get; set; }
+        //public int BudgetId { get; set; }
 
         //Virtual Properties
-        //public virtual Household Household { get; set; }// One to one
         public virtual Category Category { get; set; }
-        public virtual Budget Budget { get; set; }
+        //public virtual Budget Budget { get; set; }
     }
 }

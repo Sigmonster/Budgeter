@@ -1,19 +1,5 @@
 ﻿using System.Web.Mvc;
 using Budgeter.Models;
-using System.Text;
-using Microsoft.AspNet.Identity;
-using System;
-using Budgeter.Helpers;
-using System.Linq;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.Entity;
-using System.Linq;
-using System.Net;
-using System.Web;
-using System.Web.Mvc;
-using Budgeter.Models;
 using Microsoft.AspNet.Identity;
 using Budgeter.Helpers;
 

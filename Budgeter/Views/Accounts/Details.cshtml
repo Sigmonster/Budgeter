@@ -1,10 +1,72 @@
-﻿@model Budgeter.Models.Account
+﻿@using Budgeter.Models
+@model Account
 
 @{
-    ViewBag.Title = "Details";
+    ViewBag.Title = "Household Accounts";
+    if (Model != null)
+    {
+        ViewData["Account"] = Model;
+    }
 }
 
-<h2>Details</h2>
+
+<div class="container-HouseholdAccounts">
+    <div class="row">
+        <div class="row"></div>
+        @if(Model != null)
+        {
+        <div class="col-md-4 col-xs-12">
+            <div class="panel panel-default" id="AccountsAddTransaction">
+                @Html.Partial("_AddTransaction", new { id = Model.Id})
+            </div>
+        </div>
+        <div class="col-md-4 col-xs-12">
+            <div class="panel panel-default" id="MyHousehold-Options-Wrapper">
+                <div class="panel-heading">
+                    <div class="text-center">
+                        <h3>Household: @Model.Name Options</h3>
+                        <hr />
+                    </div>
+                </div>
+                <div class="panel-wrapper collapse in">
+                    <div class="col-xs-12 col-md-11 center-block p-t-10">
+                        <div class="row">
+                            <a href="@Url.Action("Edit", "Households", new { id = Model.Id })" class="fcbtn btn btn-info btn-outline btn-1d">Edit</a>
+                            <a href="#" title="Are you sure you want to leave?" data-placement="auto top" data-toggle="popover" class="fcbtn btn btn-danger btn-outline btn-1d leave-household-btn" data-content='If you leave this household and you are not the Head of Household, you will have to be invited back by an active member.<br/ ><br/ > <form action="/Saver/LeaveHousehold" method="post">@Html.AntiForgeryToken()<button href="#" class="fcbtn btn btn-danger btn-outline btn-block btn-1d">I Understand, Leave Household</button></form> <br/ >' data-html="true">Leave</a>
+                        </div>
+                        <div class="row">
+                            <a href="@Url.Action("Create", "Transactions")" class="fcbtn btn btn-success btn-outline btn-1d">Create New Transaction</a>
+                        </div>
+                        <div class="row">
+                            <a href="@Url.Action("Create", "Accounts")" class="fcbtn btn btn-success btn-outline btn-1d">Create New Account</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 col-xs-12">
+            <div class="panel panel-default">
+            </div>
+        </div>
+        }
+    </div>
+    @*<div class="row">
+        <div class="col-md-4 col-xs-12">
+            <div class="panel panel-default" id="myHousehold-Accounts-Panel">
+                <div class="popover-container"></div>
+                @Html.Partial("_MyHouseholdAccountsPartial", Model)
+
+            </div>
+        </div>
+    </div>*@
+</div>
+
+
+
+
+
+
+@*<h2>Details</h2>
 
 <div>
     <h4>Account</h4>
@@ -55,4 +117,4 @@
 <p>
     @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
     @Html.ActionLink("Back to List", "Index")
-</p>
+</p>*@
