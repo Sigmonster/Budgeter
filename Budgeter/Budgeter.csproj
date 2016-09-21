@@ -49,6 +49,10 @@
       <HintPath>..\packages\Antlr.3.5.0.2\lib\Antlr3.Runtime.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="CsvHelper, Version=2.0.0.0, Culture=neutral, PublicKeyToken=8c4959082be5c823, processorArchitecture=MSIL">
+      <HintPath>..\packages\CsvHelper.2.16.3.0\lib\net45\CsvHelper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.AI.Agent.Intercept, Version=2.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.ApplicationInsights.Agent.Intercept.2.0.1\lib\net45\Microsoft.AI.Agent.Intercept.dll</HintPath>
       <Private>True</Private>
@@ -213,6 +217,7 @@
     <Compile Include="App_Start\IdentityConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\AccountsController.cs" />
+    <Compile Include="Controllers\BudgetItemsController.cs" />
     <Compile Include="Controllers\PostController.cs" />
     <Compile Include="Controllers\SaverController.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
@@ -225,6 +230,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helpers\InvatationsHelper.cs" />
+    <Compile Include="Helpers\MyClassMap.cs" />
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\BudgeterViewModels.cs" />
@@ -265,6 +271,8 @@
     <Content Include="Scripts\jquery-3.1.0.slim.js" />
     <Content Include="Scripts\jquery-3.1.0.slim.min.js" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\jquery.unobtrusive-ajax.js" />
+    <Content Include="Scripts\jquery.unobtrusive-ajax.min.js" />
     <Content Include="Scripts\jquery.validate.js" />
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
@@ -323,6 +331,7 @@
     <Content Include="Template\css\style.css" />
     <Content Include="Template\css\AJStyles.css" />
     <Content Include="Template\img\blank-profile-picture.svg" />
+    <Content Include="Template\js\ajax.js" />
     <Content Include="Template\js\app.js" />
     <Content Include="Template\js\cbpFWTabs.js" />
     <Content Include="Template\js\custom.js" />
@@ -333,11 +342,13 @@
     <Content Include="Template\js\flot-data.js" />
     <Content Include="Template\js\footable-init.js" />
     <Content Include="Template\js\jasny-bootstrap.js" />
+    <Content Include="Template\js\jquery.csvToTable.js" />
     <Content Include="Template\js\jquery.nicescroll.js" />
     <Content Include="Template\js\jquery.slimscroll.js" />
     <Content Include="Template\js\jsgrid-init.js" />
     <Content Include="Template\js\mask.js" />
     <Content Include="Template\js\morris-data.js" />
+    <Content Include="Template\js\partial_Initializer.js" />
     <Content Include="Template\js\particles.js" />
     <Content Include="Template\js\toastr.js" />
     <Content Include="Template\js\validator.js" />
@@ -2930,10 +2941,25 @@
     <Content Include="Views\Shared\_DisplayTransactionsPartial.cshtml" />
     <Content Include="Views\Shared\_AddTransactionPartial.cshtml" />
     <Content Include="Views\Saver\AccountManage.cshtml" />
+    <Content Include="Views\Shared\_EditTransactionPartial.cshtml" />
+    <Content Include="Views\Shared\_TransactionsPartial.cshtml" />
+    <Content Include="Views\Shared\_UploadTransactionsVerfication.cshtml" />
+    <Content Include="Views\Shared\_AccountManageHeadPartial.cshtml" />
+    <Content Include="Views\Shared\_AccountManageOverviewBigPartial.cshtml" />
+    <Content Include="Views\Shared\_BudgetsPartial.cshtml" />
+    <Content Include="Views\BudgetItems\Create.cshtml" />
+    <Content Include="Views\BudgetItems\Delete.cshtml" />
+    <Content Include="Views\BudgetItems\Details.cshtml" />
+    <Content Include="Views\BudgetItems\Edit.cshtml" />
+    <Content Include="Views\BudgetItems\Index.cshtml" />
+    <Content Include="Views\Saver\BudgetManage.cshtml" />
+    <Content Include="Views\Shared\_BudgetAddPartial.cshtml" />
+    <Content Include="Views\Shared\_DisplayBudgetsPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Template\plugins\bower_components\etc\" />
+    <Folder Include="Uploads\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />

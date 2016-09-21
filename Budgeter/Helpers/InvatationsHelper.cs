@@ -19,7 +19,7 @@ namespace Budgeter.Helpers
         }
         public void AddNonRegisteredInvitation(string email, int householdId)
         {
-            db.InvitedButNotRegisteredEmail.Add(new InvitedButNotRegisteredEmail() {Email = email, HouseholdId = householdId });
+            db.InvitedButNotRegisteredEmail.Add(new InvitedButNotRegisteredEmail() {Email = email, HouseholdId = householdId, DateSent = DateTime.Now });
             db.SaveChanges();
         }
 

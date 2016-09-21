@@ -11,12 +11,13 @@ using System.Net;
 using System.Web.Mvc;
 using Budgeter.Models;
 using Budgeter.Helpers;
+using CsvHelper;
 
 namespace Budgeter.Models
 {
     //###########################################################
     //##################### Household VMs #######################
-        public class HouseholdEditVM
+    public class HouseholdEditVM
     {
         public int Id { get; set; }//PK
         public bool IsActive { get; set; }
@@ -41,7 +42,7 @@ namespace Budgeter.Models
     {
         public UserDashboardVM()
         {
-            
+
         }
         public ApplicationUser currentUser { get; set; }
 
@@ -72,4 +73,21 @@ namespace Budgeter.Models
         public Account Account { get; set; }
         public Transaction Transaction { get; set; }
     }
+
+    public class AccountFetchVM
+    {
+        public Household Household { get; set; }
+        public Account Account { get; set; }
+        public List<Transaction> TransactionList { get; set; }
+        public Transaction Transaction { get; set; }
+    }
+    //##############################################################
+    //##################### UploadVerification VM ##################
+    public class UploadVerficationVM
+    {
+        //public List<Transaction> TransactionList { get; set; }
+
+
+    }
+
 }

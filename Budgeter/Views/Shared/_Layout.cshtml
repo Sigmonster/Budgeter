@@ -246,11 +246,16 @@
     <script src="~/Template/js/jquery.slimscroll.js"></script>
     <!--Wave Effects -->
     <script src="~/Template/js/waves.js"></script>
-    <!-- Custom Theme JavaScript -->
-    <script src="~/Template/js/custom.js"></script>
-
     <!--Style Switcher -->
     <script src="~/Template/plugins/bower_components/styleswitcher/jQuery.style.switcher.js"></script>
+    @*<script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>*@
+    @Scripts.Render("~/bundles/jqueryval")
+    <script src="~/Template/js/ajax.js"></script>
+    <!-- Custom Theme JavaScript -->
+    @*<script src="~/Template/js/custom.js"></script>*@
+
+
     @RenderSection("scripts", required: false)
 </body>
 </html>

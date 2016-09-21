@@ -1,0 +1,56 @@
+﻿@using Budgeter.Models
+@model Account
+@{
+
+}
+
+
+<div class="col-md-12 col-xs-12">
+    <div class="panel panel-default" id="Account-Transactions-Wrapper">
+        <div class="panel-heading">
+            
+            <div class="row text-center">
+                <h2>Account: @Model.Name</h2>
+            </div>
+        </div>
+        <div class="panel-wrapper collapse in">
+
+            <div class="panel-footer">
+                <ul id="AccountManage-NavBtns">
+                    <li>
+                        <a href="javascript:activeTransactions(@Model.Id)" class="btn btn-success btn-block sticon ti-money"><span>Active Transactions</span></a>
+                    </li>
+                    <li>
+                        <a href="javascript:archivedTransactions(@Model.Id)" class="btn btn-info btn-block sticon ti-trash"><span>Archived Transactions</span></a>
+                    </li>
+                </ul>
+                <div class="row text-center">
+                    make this a partial and have it update as transactions do...
+                    <h4><b>Available Balance: </b>@Model.Balance &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Reconciled Balance: </b>@Model.ReconciledBalance</h4>
+                </div>
+            </div>
+
+            </div>
+        </div>
+    </div>
+
+            @*<section>
+                    <div class="sttabs tabs-style-bar">
+                        <nav>
+                            <ul>
+                                <li class="tab-current"><a href="#section-bar-1" class="sticon ti-home"><span>Home</span></a></li>
+                                <li class=""><a href="#section-bar-2" class="sticon ti-trash"><span>Archive</span></a></li>
+                                <li class=""><a href="#section-bar-3" class="sticon ti-stats-up"><span>Analytics</span></a></li>
+                                <li><a href="#section-bar-4" class="sticon ti-upload"><span>Upload</span></a></li>
+                                <li><a href="#section-bar-5" class="sticon ti-settings"><span>Settings</span></a></li>
+                            </ul>
+                        </nav>
+                        <div class="content-wrap">
+                            <section id="section-bar-1" class="content-current"></section>
+                            <section id="section-bar-2" class=""></section>
+                            <section id="section-bar-3" class=""></section>
+                            <section id="section-bar-4"></section>
+                            <section id="section-bar-5"></section>
+                        </div>
+                    </div> /tabs
+                </section>*@

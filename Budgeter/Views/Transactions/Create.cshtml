@@ -7,96 +7,187 @@
 }
 
 <h2>Create</h2>
+<div class="col-md-8">
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
 
-@using (Html.BeginForm())
-{
-    @Html.AntiForgeryToken()
+        <div class="form-horizontal">
+            <h4>Transaction</h4>
+            <hr />
 
-    <div class="form-horizontal">
-        <h4>Transaction</h4>
-        <hr />
+            <div class="form-group">
+                <label class="control-label col-md-2" for="AccountId">Account</label>
+                <div class="col-md-4">
+                    @Html.DropDownList("AccountId", null, "Select Account", htmlAttributes: new { @class = "form-control col-md-4", required = "required" })
+                    @Html.ValidationMessageFor(model => model.AccountId, "", new { @class = "text-danger" })
+                </div>
+            </div>
 
-        <div class="form-group">
-            <label class="control-label col-md-2" for="AccountId">Account</label>
-            <div class="col-md-4">
-                @Html.DropDownList("AccountId", null, "Select Account", htmlAttributes: new { @class = "form-control col-md-4", required = "required" })
-                @Html.ValidationMessageFor(model => model.AccountId, "", new { @class = "text-danger" })
+            <div class="form-group">
+                <label class="control-label col-md-2" for="IsExpense">Type</label>
+                <div class="col-md-4">
+                    <select class="form-control" id="IsExpense" name="IsExpense" required="required">
+                        <option value="true">Expense</option>
+                        <option value="false">Income</option>
+                    </select>
+                    @Html.ValidationMessageFor(model => model.IsExpense, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label col-md-2" for="selector_1">Category</label>
+                <div class="col-md-4">
+                    @Html.DropDownList("CategoryId", null, "Select Category", htmlAttributes: new { @class = "form-control", required = "required" })
+                    @Html.ValidationMessageFor(model => model.CategoryId, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Date, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-4">
+                    @Html.EditorFor(model => model.Date, new { htmlAttributes = new { @class = "form-control date-picker col-md-4", required = "required" } })
+                    @Html.ValidationMessageFor(model => model.Date, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Amount, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-4">
+                    @Html.EditorFor(model => model.Amount, new { htmlAttributes = new { @class = "form-control col-md-4" } })
+                    @Html.ValidationMessageFor(model => model.Amount, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-4">
+                    @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control col-md-4" } })
+                    @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            @*@if (currentHousehold.BudgetItems.Count() > 0)
+                {
+                <div class="form-group">
+                    <label class="control-label col-md-2" for="selector_1">Budget(optional)</label>
+                    <div class="col-md-4">
+                        @Html.DropDownList("BudgetId", null, "Associated Budget(Optional)", htmlAttributes: new { @class = "form-control", required = "required" })
+                        @Html.ValidationMessageFor(model => model.BudgetItemId, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                }*@
+
+            <div class="form-group">
+                <label class="control-label col-md-2" for="IsReconciled">Processed/Pending</label>
+                <div class="col-md-4">
+                    <select class="form-control" id="IsReconciled" name="IsReconciled" required="required">
+                        <option value="true">Processed</option>
+                        <option value="false">Pending</option>
+                    </select>
+                    @Html.ValidationMessageFor(model => model.IsReconciled, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-4">
+                    <input type="submit" value="Create" class="btn btn-default" />
+                </div>
             </div>
         </div>
+    }
 
-        <div class="form-group">
-            <label class="control-label col-md-2" for="IsExpense">Type</label>
-            <div class="col-md-4">
-                <select class="form-control" id="IsExpense" name="IsExpense" required="required">
-                    <option value="true">Expense</option>
-                    <option value="false">Income</option>
-                </select>
-                @Html.ValidationMessageFor(model => model.IsExpense, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label class="control-label col-md-2" for="selector_1">Category</label>
-            <div class="col-md-4">
-                @Html.DropDownList("CategoryId", null, "Select Category", htmlAttributes: new { @class = "form-control", required = "required" })
-                @Html.ValidationMessageFor(model => model.CategoryId, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.Date, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-4">
-                @Html.EditorFor(model => model.Date, new { htmlAttributes = new { @class = "form-control date-picker col-md-4", required = "required" } })
-                @Html.ValidationMessageFor(model => model.Date, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.Amount, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-4">
-                @Html.EditorFor(model => model.Amount, new { htmlAttributes = new { @class = "form-control col-md-4" } })
-                @Html.ValidationMessageFor(model => model.Amount, "", new { @class = "text-danger" })
-            </div>
-        </div>
-        <div class="form-group">
-            @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-4">
-                @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control col-md-4" } })
-                @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
-            </div>
-        </div>
-        @*@if (currentHousehold.BudgetItems.Count() > 0)
-        {
-        <div class="form-group">
-            <label class="control-label col-md-2" for="selector_1">Budget(optional)</label>
-            <div class="col-md-4">
-                @Html.DropDownList("BudgetId", null, "Associated Budget(Optional)", htmlAttributes: new { @class = "form-control", required = "required" })
-                @Html.ValidationMessageFor(model => model.BudgetItemId, "", new { @class = "text-danger" })
-            </div>
-        </div>
-        }*@
-
-        <div class="form-group">
-            <label class="control-label col-md-2" for="IsReconciled">Processed/Pending</label>
-            <div class="col-md-4">
-                <select class="form-control" id="IsReconciled" name="IsReconciled"  required="required">
-                    <option value="true">Processed</option>
-                    <option value="false">Pending</option>
-                </select>
-                @Html.ValidationMessageFor(model => model.IsReconciled, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-4">
-                <input type="submit" value="Create" class="btn btn-default" />
-            </div>
-        </div>
+    <div>
+        @Html.ActionLink("Back to List", "Index")
     </div>
-}
-
-<div>
-    @Html.ActionLink("Back to List", "Index")
 </div>
+@*<div class="col-md-4">
 
+    <div id="responsive-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title">Modal Content is Responsive</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        @using (Ajax.BeginForm("BulkUploadVerification", "Saver",
+                            new AjaxOptions
+                            {
+                                HttpMethod = "Post",
+                                LoadingElementId = "ajax-loader",
+                                UpdateTargetId = "display-BulkVerification",
+                                InsertionMode = InsertionMode.Replace,
+                            }))
+                        @using (Html.BeginForm("BulkUploadVerification", "Saver", FormMethod.Post, new { id = "bulkTransactionModalFormId", action = "javascript:submitBulkTransactionsForm()", enctype = "Multipart/form-data" }))
+                        {
+                            <input type="text" name="textCsv" id="csvRaw">
+                            <button type="submit"></button>
+                                    }
+                        <input type="file" name="FileUpload" id="uploadTransactionsInput">
+                            <button type="submit" id="uploadTransactionsBtn">GO</button>
+
+                        <button type="submit" id="buildTable">BuildTable</button>
+
+                        <output id="fileData">
+                            file contents will appear here
+                        </output>
+
+                            <button type="submit" id="uploadTransactionsBtn">GO</button>
+                            }
+
+                        </div>
+                        <div class="row">
+                            <div class="pull-left">
+                                <div id="ajax-loader" style=""><div class="row text-center"><i class="fa fa-spinner fa-spin fa-3x fa-fw"></i></div> <div class="row">Fetching Results...</div></div>
+                            </div>
+                        </div>
+                        <div class="row" id="display-BulkVerification">
+                            @*<table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Account</th>
+                                        <th>Category</th>
+                                        <th>Amount</th>
+                                        <th>Description</th>
+                                        <th>Processed</th>
+                                        <th>Expense</th>
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+
+                                        <tr>
+                                            <th>@item.Date</th>
+                                            <td>@item.Account.Name</td>
+                                            <td>@item.Category.Name</td>
+                                            <td>@item.Amount</td>
+                                            <td>@item.Description</td>
+                                            <td>@item.IsReconciled</td>
+                                            <td>@item.IsExpense</td>
+                                        </tr>
+
+                                </tbody>
+                            </table>
+
+
+
+
+
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button data-toggle="modal" data-target="#responsive-modal">Bulk Import Transactions</button>
+
+
+    </div>*@
+@*@section Scripts{
+<script src="~/Template/js/jquery.csvToTable.js"></script>
+    }*@
 

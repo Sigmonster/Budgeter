@@ -9,7 +9,15 @@
     color: #0073bc;
     font-size: 16px;
 }
-
+/*Partial form modal section, EditTransaction*/
+.partial-form-group{
+    margin-left: auto !important;
+    margin-right: auto !important;
+    margin-bottom:15px !important;
+}
+.partial-form-group label{
+    text-align:left !important;
+}
 
 
 /*Layout Page*/
@@ -219,6 +227,28 @@ overflow:hidden
     padding-top: 3px;
 }
 /*Start Account Manage Section*/
+#AccountManage-NavBtns{
+        display: flex;
+    list-style: none;
+}
+#AccountManage-NavBtns li{
+    position: relative;
+    z-index: 1;
+    display: block;
+    margin: 0;
+    text-align: center;
+    flex: 1;
+}
+#AccountManage-NavBtns a{
+text-transform:uppercase;
+}
+#AccountManage-NavBtns span{
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 14px;
+    font-family: 'Poppins', sans-serif;
+
+}
 .isExpense-True{
     font-weight:400;
     color:#fb9678;
@@ -229,7 +259,30 @@ overflow:hidden
     color:#00c292;
 
 }
-
+.voided-True{
+    text-decoration: line-through;
+}
+/*.screen-center-outerdiv{
+    width: 100%;
+    height: 100%;
+    margin-left:auto;
+    margin-right:auto;
+    top: 0px;
+    position: fixed;
+    z-index: 99999;
+}*/
+#ajax-Accounts-loader{
+    /*position: absolute;
+     top: 50%;
+    left: 50%;
+    margin-top:-200px;
+    margin-left:-50%;
+    z-index:9999;*/
+    display:none;
+}
+/*#ajax-loader{
+    z-index:9999; background-color:rgba(211, 211, 211, 0.57); color:#00c292; padding: 15px; display:none;
+}*/
 /*Transaction Options Dropdown-Popover TableBody*/
 #disp-transactions-body .popover-content{
     padding: 0;
@@ -237,8 +290,10 @@ overflow:hidden
     bottom: 10px;
     position: relative;
     right: 139px;
+    z-index:9999;
 }
-#disp-transactions-body .popover .arrow{
+#disp-transactions-body .popover .arrow, 
+#displayBudgetsWrapper .popover .arrow{
     display:none;
 }
 
@@ -256,4 +311,36 @@ overflow:hidden
     color: #ffffff;
     background-color: #fb9678;
     border-color: #fb9678;
+}
+
+
+/*BudgetManage Section*/
+/*Panels - BudgetManage*/
+#budgetManageContainer-Wrapper .panel{
+overflow:hidden
+}
+#budgetManageContainer-Wrapper .panel-heading{
+    padding-bottom:5px;
+}
+#budgetManageContainer-Wrapper .panel-wrapper{
+    height:350px;
+    overflow:auto;
+    padding: 0 20px;
+    
+}
+/*Popovers - BudgetManage*/
+#budgetManageContainer-Wrapper .popover{
+        position:relative;
+}
+#displayBudgetsWrapper .popover-content {
+    padding: 0;
+    height: 0;
+    width:0;
+    bottom: 10px;
+    position: relative;
+    right: 139px;
+    z-index:9999;
+}
+#displayBudgetsWrapper .popover{
+    width:0;
 }

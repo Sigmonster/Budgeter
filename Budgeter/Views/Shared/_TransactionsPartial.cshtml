@@ -1,0 +1,112 @@
+﻿@using Budgeter.Models
+@model List<Transaction>
+
+
+        <div class="panel-heading">
+            <div class="row">
+                @*<h4><b>Available Balance: </b>@Model.Account.Balance &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Reconciled Balance: </b>@Model.Account.ReconciledBalance</h4>*@
+            </div>
+            <div class="row text-center">
+                Inactive/Deleted Transactions
+            </div>
+        </div>
+        <div class="panel-wrapper collapse in">
+
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr class="ticket-tbl-row">
+                            <th>Date</th>
+                            <th>EnteredBy</th>
+                            <th>Category</th>
+                            <th>Processed</th>
+                            <th>Description</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody class="" id="disp-transactions-body">
+                        @foreach (var item in Model)
+                        {
+                            <tr class="voided-@item.IsVoid.ToString()">
+                                <td>@item.Date.ToString("M/dd/yy")</td>
+                                <td>@item.EnteredBy.DisplayName</td>
+                                <td>@item.Category.Name</td>
+                                <td>
+                                    @if (item.IsReconciled == true)
+                                    {
+                                        @:Processed
+                                    }
+                                    @if (item.IsReconciled == false)
+                                    {
+                                        @:Pending
+                                    }
+                                </td>
+                                <td>@item.Description</td>
+                                <td class="isExpense-@item.IsExpense.ToString()">
+                                    @if (item.IsExpense == true)
+                                    {
+                                        @:(
+                                        @(item.Amount * -1)@:)
+                                    }
+                                    @if (item.IsExpense == false)
+                                    {
+
+                                        @item.Amount
+                                    }
+                                </td>
+                                <td>
+                                    <a title="" tabindex="0" data-placement="auto bottom" data-toggle="popover" data-trigger="focus" class="btn btn-default btn-outline waves-effect waves-light transaction-options" data-content='<ul role="menu" class="dropdown-menu" style="display:inline;"><li><h5 class="text-center">-Mark Transaction-</h5></li><li><a class="voidBTN" href="javascript:voidBtn(@item.Id,true)">Void</a></li><li><a class="voidBTN" href="javascript:voidBtn(@item.Id,false)">Undo-Void</a></li><li><a href="@Url.Action("Edit","Accounts", new {id = item.Id})">Edit</a></li><li><a href="@Url.Action("Details","Accounts", new {id = item.Id})">Go to</a></li><li><a href="@Url.Action("Delete","Accounts", new {id = item.Id})">Delete</a></li><li><a href="@Url.Action("Create", "Transactions")" class="">Add Transaction</a></li></ul><br/>' data-html="true"><i class="fa fa-gear m-r-5"></i></a>
+                                    @*<a class="voidBTN" id="@item.Id" data-value="true" onclick="voidBtn(@item.Id,'true')">Void</a>*@
+                                    @*<a class="voidBTN" href="javascript:voidBtn(@item.Id,false)">Undo-Void</a>*@
+                                    <a class="" href="javascript:deleteBtn(@item.Id,true)">Set As Active</a>
+
+                                </td>
+                            </tr>
+
+                                        }
+                    </tbody>
+                </table>
+                <br />
+            </div>
+        </div>
+        <div class="panel-footer"></div>
+
+<script>
+        $(function () {
+            //Transaction Options
+            $('.transaction-options').popover({ html: true, container: '#disp-transactions-body', trigger: "click" });
+
+        });
+
+        //Works keeping for reference, now using href="javascript:voidBtn(item.Id,false)" to call
+        //$(function () {
+        //    $('.voidBTN').click(function () {
+        //        var id = this.id.toString();
+        //        var voidAction = $(this).data("value");
+        //        var jsonObject = {
+        //            Name:"TestName"
+        //        };
+        //        console.log("Clicked, ID:" +id);
+
+
+
+        //        $.ajax({
+        //            type: "POST",
+        //            url: "/Saver/VoidTransaction",
+        //            data: {id: id, voidAction: voidAction},
+        //            //contentType: 'application/json; charset=utf-8',
+        //            dataType: 'text',
+        //            error: function(response){
+        //                console.log("Error! " + response);
+        //            },
+        //            success: function(response) {
+        //                console.log("Success!");
+        //                $("#postAccountResults").html(response);
+        //            }
+
+        //        })
+        //    });
+        //});
+
+
+</script>

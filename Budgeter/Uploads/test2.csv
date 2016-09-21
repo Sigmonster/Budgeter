@@ -1,0 +1,3 @@
+Date,Account,Category,Amount,Description,Processed,Expense
+09/18/16,1,Entertainment,100,Hotel,TRUE,1
+09/16/16,1,Entertainment,115,Food,FALSE,1

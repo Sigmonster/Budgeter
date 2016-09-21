@@ -1,0 +1,72 @@
+﻿@using Budgeter.Models
+@model List<BudgetItem>
+
+@{ 
+    
+}
+
+<div class="panel-heading">
+    <div class="text-center">
+        <div class="pull-left">
+            <a href="#" id="addBudgetBtn" class="tooltip-success" data-toggle="tooltip" data-placement="top" title="Add Budget Category!" data-original-title="Click multiple times to add more than one Budget Category." style="font-size: 16px; color: #00c292;"><i class="fa fa-plus-circle" style="font-size: 25px;"></i></a>
+        </div>
+        <h3>Household Budgets</h3>
+        <hr />
+    </div>
+</div>
+
+<div class="panel-wrapper collapse in">
+
+
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Budget</th>
+                    <th>Amount</th>
+                    <th>Category</th>
+                </tr>
+            </thead>
+            <tbody>
+                @*@foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @item.Email
+                        </td>
+                        <td>
+                            @item.DisplayName
+                        </td>
+
+                        <td>
+                            @using (Html.BeginForm("RevokeInvitationPartialForm", "Saver", FormMethod.Post, new { role = "form" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                <input name="email" id="EmailInvite-@item.Id" type="hidden" value="@item.Email">
+                                <button type="submit" class="RevokeInviteButton btn-danger" id="@item.Id"><i class="fa fa-close"></i></button>
+                            }
+                        </td>
+                    </tr>
+                }
+                @foreach (var item in Model.InvitedNotRegisteredEmail)
+                {
+                    <tr>
+                        <td>
+                            @item.Email
+                        </td>
+                        <td>
+                            User Not Registered
+                        </td>
+                        <td>
+                            @using (Html.BeginForm("RevokeInvitationPartialForm", "Saver", FormMethod.Post, new { role = "form", id = "RevokeInvite-" + @item.Id }))
+                            {
+                                <input name="email" id="EmailInvite-@item.Id" type="hidden" value="@item.Email">
+                                <button type="submit" class="RevokeInviteButton btn-danger" id="@item.Id"><i class="fa fa-close"></i></button>
+                            }
+                        </td>
+                    </tr>
+                }*@
+            </tbody>
+        </table>
+    </div>
+</div>

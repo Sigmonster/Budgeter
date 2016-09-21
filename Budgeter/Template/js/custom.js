@@ -286,24 +286,75 @@ $(document).ready(function() {
         });
     });
 
-    /*Manage Account Section*/
-    $(document).ready(function () {
-        $("#IsExpense").change(function () {
-            var value = $(this).val();
-            if (value == "false") {
-                $("#category-form-group").hide();
-                $("#CategoryId").val("18");
-            }
-            else {
-                $("#CategoryId").val("");
-                $("#category-form-group").show();
-            }
-        })
+
+ 
+    //clears add transaction inputfields and resets date.
+    //function GetAccountData(responseEditTransaction) {
+    //    $("#postAccountResults").html(responseEditTransaction);
+    //    $("#IsExpense").val("true");
+    //    $("#category-form-group").show();
+    //    $("#CategoryId").val("");
+    //    $("#Date").val(new Date().toLocaleDateString());
+    //    $("#Amount").val("0");
+    //    $("#Description").val("");
+    //    $("#IsReconciled").val("true");
+    //}
+
+
+
+
+    //Create/Edit Transaction Forms
+    //shows/hides category form-group when expense/income is selected
+    $("#IsExpense").change(function () {
+        var value = $(this).val();
+        if (value == "false") {
+            $("#category-form-group").hide();
+            $("#CategoryId").val("18");
+        }
+        else {
+            $("#CategoryId").val("");
+            $("#category-form-group").show();
+        }
+    });
 
         //Transaction Options
         $('.transaction-options').popover({ html: true, container: '#disp-transactions-body', trigger: "click" });
+        //Transaction Options
+        //$('.budget-options').popover({ html: true, container: '#displayBudgetsWrapper', trigger: "click" });
+        $(function () {
+            $(".date-picker").datepicker({ dateformat: "mm/dd/yy" });
+        });
 
-    });
+        if (!$.datepicker.initialized) {
+            $(document).mousedown($.datepicker._checkExternalClick)
+                // !!!!!!!!!!
+                // The next code line has to be added again so that the date picker
+                // shows up when the popup is opened more than once without reloading
+                // the "base" page.
+                // !!!!!!!!!!
+                .find(document.body).append($.datepicker.dpDiv);
+            $.datepicker.initialized = true;
+        };
+/*MyHousehold Budgets Partial*/
+        //$(document).ready(function () {
+        //    var counter = 0;
+
+        //    $("#addBudgetBtn").click(function () {
+        //        var domElement = $('  <div class="row addUsersElement" style="padding-top: 5px;"> <div class="col-md-2"> <label style="padding-top: 9px;" for="email">Email: </label></div> <div class="col-md-8"><input type="email" name="emailInvites" class="form-control" id="email"></div></div>');
+        //        $('#addBudgetItemInputRow').append(domElement);
+        //        counter++;
+        //        $('.addBudgetsElement').show();
+        //    });
+        //    $('#btn-ClearBudgetDom').click(function () {
+        //        counter = 0;
+        //        $('#addBudgetItemInputRow').empty();
+        //        $("#addUserSubmitRow").empty();
+        //        $('.addBudgetsElement').hide();
+        //    });
+        //    $('#btn-SendInvites').click(function () {
+        //        counter = 0;
+        //    })
+        //});
 /*MyHousehold Members Partial*/
     $(document).ready(function () {
         var counter = 0;
@@ -319,7 +370,7 @@ $(document).ready(function() {
             $('#addUserEmailInputRow').empty();
             $("#addUserSubmitRow").empty();
             $('.addUsersElement').hide();
-        })
+        });
         $('#btn-SendInvites').click(function () {
             counter = 0;
             //$('#MyHousehold-Members-Wrapper').append(' <div class="col-xs-12 col-md-11 center-block"><div class="row m-t-30"><h3 style="text-align: center;"><i class="fa fa-spin fa-spinner" style="font-size: 25px;"></i> Fetching Household Data... </h3></div></div>');
@@ -330,8 +381,6 @@ $(document).ready(function() {
             //$('.addUsersElement').hide();
         })
        
-        /*Create Transaction*/
-
         $(function () {
             $(".date-picker").datepicker({ dateformat: "mm/dd/yy"});
         });

@@ -12,7 +12,9 @@ namespace Budgeter
                         "~/Scripts/jquery-{version}.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/jqueryval").Include(
-                        "~/Scripts/jquery.validate*"));
+                        "~/Scripts/jquery.unobtrusive*",//Installed via nuget for Ajax Partial Views
+                        "~/Scripts/jquery.validate*",
+                        "~/Template/js/custom.js"));
 
             // Use the development version of Modernizr to develop with and learn from. Then, when you're
             // ready for production, use the build tool at http://modernizr.com to pick only the tests you need.

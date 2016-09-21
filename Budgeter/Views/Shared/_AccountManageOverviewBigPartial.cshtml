@@ -1,0 +1,12 @@
+﻿@using Budgeter.Models
+@model AccountFetchVM
+
+
+
+<div id="displayAddTransactionWrapper">
+    @Html.Partial("_AddTransactionPartial", Model.Transaction)
+</div>
+
+<div id="displayTransactionsWrapper">
+    @Html.Partial("_DisplayTransactionsPartial", Model.TransactionList)
+</div>

@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Web;
+using System.Web.Mvc;
 
 namespace Budgeter.Models
 {
@@ -252,9 +253,11 @@ namespace Budgeter.Models
 
         //FKs
         public int CategoryId { get; set; }
+        public int HouseholdId { get; set; }
         //public int BudgetId { get; set; }
 
         //Virtual Properties
+        public virtual Household Household { get; set; }
         public virtual Category Category { get; set; }
         //public virtual Budget Budget { get; set; }
     }

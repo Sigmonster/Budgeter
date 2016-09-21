@@ -29,6 +29,11 @@
                 </div>
             </div>
         </div>
+        <div class="col-md-8 col-xs-12">
+            <div class="panel panel-default" id="MyHousehold-Budgets-Wrapper">
+                @Html.Partial("_BudgetsPartial", @Model.BudgetItems.ToList())
+            </div>
+        </div>
         <div class="col-md-4 col-xs-12">
             <div class="panel panel-default" id="MyHousehold-Members-Wrapper">
                 @Html.Partial("_MyHouseholdMembersPartial", @Model.Members.ToList())
