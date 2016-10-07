@@ -276,7 +276,8 @@ namespace Budgeter.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> ChangePassword(ChangePasswordViewModel model)
         {
-            if (!ModelState.IsValid)
+            var usercheck = UserManager.FindById(User.Identity.GetUserId());
+            if (!ModelState.IsValid || usercheck.Email == "DemoTest@gmail.com")
             {
                 return View(model);
             }

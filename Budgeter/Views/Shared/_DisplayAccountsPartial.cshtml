@@ -1,0 +1,84 @@
+﻿@using Budgeter.Models
+@model List<Account>
+
+<div class="col-md-8 col-xs-12">
+    <div class="panel panel-default" id="accounts-display-panel">
+        <div class="panel-heading">
+            <div class="row text-center">
+                <h3> @ViewBag.AccountsListTitle</h3>
+            </div>
+        </div>
+        <div class="panel-wrapper collapse in" id="Account-Transactions-Wrapper">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover myTablez">
+                    <thead>
+                        <tr class="ticket-tbl-row">
+                            <th style="vertical-align:middle">Account</th>
+                            <th style="vertical-align:middle">
+                                Available <a title="Available Balance Information" data-placement="auto top" data-toggle="popover" class="popover-info-ManageAccount" data-content='<div class="text-center info-anchor-paneltext">The <b>Available Balance</b> is the calculated total of ALL <b>Active Transactions</b> that are not voided out(struck-thru). This includes Transactions that are either Processed and Pending.<br/ ><br/ ></div>' data-html="true"><i class="fa fa-info-circle infoIcon" aria-hidden="true"></i></a>
+                                <br />Balance
+                            </th>
+                            <th style="vertical-align:middle">
+                                Reconciled <a title='Reconciled Balance Info' data-placement="auto top" data-toggle="popover" class="popover-info-ManageAccount" data-content='<div class="text-center info-anchor-paneltext">The <b>Reconciled Balance</b> is the calculated total of ONLY <b>Active Transactions</b> that are labeled as <b>Processed</b> and not voided out(struck-thru). This does not included Transactions that are Pending.<br/ ><br/ ></div>' data-html="true"><i class="fa fa-info-circle infoIcon" aria-hidden="true"></i></a>
+                                <br />Balance
+                            </th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody class="" id="disp-accounts-body">
+                        @foreach (var item in Model)
+                        {
+                            <tr class="isActive-@item.IsActive.ToString()" id="account-row-@item.Id">
+                                <td class="acc-name-td">@item.Name</td>
+                                <td>@item.Balance</td>
+                                <td>@item.ReconciledBalance</td>
+                                <td>
+                                    @*@if (item.IsActive)
+                                        {*@
+                                    <a title="" id="accountDropdown-@item.Id" tabindex="0" data-placement="auto bottom" data-toggle="popover" data-trigger="focus" class="btn btn-default btn-outline waves-effect waves-light account-options" data-content='<ul role="menu" class="dropdown-menu" style="display:inline;"><li><a href="javascript:editAccountBtn(@item.Id)">Edit Account</a></li><li><h5 class="text-center"><b>-Mark Account-</b></h5></li><li><a href="javascript:toggleAccountStatusBtn(@item.Id,false)">Inactive</a></li><li><a href="javascript:toggleAccountStatusBtn(@item.Id,true)">Active</a></li></ul><br/>' data-html="true"><i class="fa fa-gear m-r-5"></i></a>
+                                    @*}
+                                        else
+                                        {
+                                            <a class="btn btn-info" href="javascript:deleteBudgetBtn(@item.Id,true)">Set As Active</a>
+                                        }*@
+                                    @*<a class="voidBTN" id="@item.Id" data-value="true" onclick="voidBtn(@item.Id,'true')">Void</a>*@
+                                    @*<a class="voidBTN" href="javascript:voidBtn(@item.Id,false)">Undo-Void</a>*@
+                                    @*<a class="" href="javascript:editTransactionBtn(@item.Id)">Edit</a>*@
+                                    @*<a class="processedBTN" href="javascript:processedBtn(@item.Id,true)">Processed</a>*@
+                                    @*<a class="processedBTN" href="javascript:processedBtn(@item.Id,false)">Pending</a>*@
+                                    @*<a class="" href="javascript:deleteBtn(@item.Id,false)">Delete</a>*@
+                                </td>
+                            </tr>
+
+                        }
+                    </tbody>
+                </table>
+                <br />
+            </div>
+        </div>
+
+        <div class="panel-footer" id="dispAccFooter-PopoverContainer"></div>
+    </div>
+</div>
+<div class="col-md-4 col-xs-12">
+    <div class="panel panel-default">
+    </div>
+</div>
+
+<script>
+        $(function () {
+            //Transaction Options
+            $('.account-options').popover({ html: true, container: '#dispAccFooter-PopoverContainer', trigger: "focus" });
+            $('.popover-info-ManageAccount').popover({ html: true, container: '.popover-info-container', trigger: "hover" });
+
+
+        });
+        $(document).ready(function () {
+            /*Stand DataTable*/
+            var table = $('.myTablez').DataTable({
+                "order": []//Disable Initial Sort
+            });
+        });
+</script>
+
+

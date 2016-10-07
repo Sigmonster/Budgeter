@@ -15,7 +15,7 @@ using System.IO;
 using System.Threading.Tasks;
 
 namespace Budgeter.Controllers
-{
+{   [Authorize]
     public class SaverController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
@@ -24,10 +24,25 @@ namespace Budgeter.Controllers
         public ActionResult MyHousehold()
         {
             var currentUser = db.Users.Find(User.Identity.GetUserId());
-            var household = currentUser.Household;
-            ViewBag.CategoryId = new SelectList(household.Categories, "Id", "Name");
+            if (currentUser.Household != null)
+            {
+                var household = currentUser.Household;
+                ViewBag.CategoryId = new SelectList(household.Categories.Where(x => x.IsActive == true), "Id", "Name");
+                var transactionList = new List<Transaction>();
 
-            return View(household);
+                  foreach (var item in household.Accounts)
+                {
+                    var top5 = item.Transactions.Where(t=>t.IsActive == true).OrderByDescending(x => x.Date).Take(5).ToList();
+                   transactionList.AddRange(top5);
+                }
+
+                ViewData["TransactionList"] = (List<Transaction>)transactionList.OrderByDescending(x=>x.Date).ToList();
+                return View(household);
+            }
+            else
+            {
+               return RedirectToAction("Create", "Households");
+            }
         }
 
         //######## Send Invitations ########
@@ -162,7 +177,7 @@ namespace Budgeter.Controllers
         }
 
         //#########################################
-        //######## Account Manage Section #########
+        //######## MyManager Section #########
         public ActionResult AccountManage(int? accounts)
         {
             var currentUser = GetCurrentUser();
@@ -170,7 +185,7 @@ namespace Budgeter.Controllers
             
             //var accountManageVM = new AccountManageVM();
             //accountManageVM.Household = household;
-            ViewBag.Accounts = new SelectList(household.Accounts, "Id", "Name");
+            ViewBag.Accounts = new SelectList(household.Accounts.Where(x=>x.IsActive == true), "Id", "Name");
             if (accounts != null)
             {
                 var account = db.Account.Find(accounts);
@@ -182,8 +197,8 @@ namespace Budgeter.Controllers
                     //modelTransaction.Date = DateTime.Now;
                     //modelTransaction.AccountId = account.Id;
                     //modelTransaction.Account = account;
-                    ViewBag.AccountId = new SelectList(household.Accounts, "Id", "Name");
-                    ViewBag.CategoryId = new SelectList(household.Categories, "Id", "Name");
+                    ViewBag.AccountId = new SelectList(household.Accounts.Where(x => x.IsActive == true), "Id", "Name");
+                    ViewBag.CategoryId = new SelectList(household.Categories.Where(x => x.IsActive == true), "Id", "Name");
                     //ViewBag.CurrentHousehold = household;
                     //accountManageVM.Transaction = modelTransaction;
                     var model = GetAccountFetchVM(account.Id);
@@ -213,8 +228,8 @@ namespace Budgeter.Controllers
             accountFetchVM.Transaction.AccountId = accounts;
             accountFetchVM.Account = account;
             accountFetchVM.Household = household;
-            ViewBag.AccountId = new SelectList(household.Accounts, "Id", "Name");
-            ViewBag.CategoryId = new SelectList(household.Categories, "Id", "Name");
+            ViewBag.AccountId = new SelectList(household.Accounts.Where(x => x.IsActive == true), "Id", "Name");
+            ViewBag.CategoryId = new SelectList(household.Categories.Where(x => x.IsActive == true), "Id", "Name");
 
             return accountFetchVM;
         }
@@ -222,14 +237,14 @@ namespace Budgeter.Controllers
         {
             var account = db.Account.Find(accountId);
             var transactionList = account.Transactions.Where(t => t.IsActive == true).OrderByDescending(t => t.Date).ToList();
-            ViewBag.TransactionsListTitle = "Transactions for : " + account.Name;
+            ViewBag.TransactionsListTitle = "Active Transactions";
             return transactionList;
         }
         private List<Transaction> GetInActiveTransactions(int accountId)
         {
             var account = db.Account.Find(accountId);
             var transactionList = account.Transactions.Where(t => t.IsActive == false).OrderByDescending(t => t.Date).ToList();
-            ViewBag.TransactionsListTitle = "Deleted Transactions for : " + account.Name;
+            ViewBag.TransactionsListTitle = "Deleted Transactions";
             return transactionList;
         }
 
@@ -245,7 +260,19 @@ namespace Budgeter.Controllers
             db.Entry(transaction).State = EntityState.Modified;
             db.SaveChanges();
             var model = GetActiveTransactions(transaction.AccountId);
-            return PartialView("_DisplayTransactionsPartial", model);
+            if(transaction.IsVoid == true)
+            {
+                return Content("True");
+            }
+            else if(transaction.IsVoid == false)
+            {
+                return Content("False");
+            }
+            else
+            {
+                return Content("Error");
+            }
+            //return PartialView("_DisplayTransactionsPartial", model);
         }
 
         //Processed/Pending Transactions (Reconcile)
@@ -260,8 +287,20 @@ namespace Budgeter.Controllers
             transaction.IsReconciled = reconcileRequest;
             db.Entry(transaction).State = EntityState.Modified;
             db.SaveChanges();
-            var model = GetActiveTransactions(transaction.AccountId); 
-            return PartialView("_DisplayTransactionsPartial", model);
+            var model = GetActiveTransactions(transaction.AccountId);
+            if (transaction.IsReconciled == true)
+            {
+                return Content("True");
+            }
+            else if (transaction.IsReconciled == false)
+            {
+                return Content("False");
+            }
+            else
+            {
+                return Content("Error");
+            }
+            //return PartialView("_DisplayTransactionsPartial", model);
         }
 
         [HttpPost]
@@ -271,34 +310,38 @@ namespace Budgeter.Controllers
             int.TryParse(id, out transactionID);
             bool isActiveActionRequest = (isActiveAction == "true") ? true : false;
             var currentUser = GetCurrentUser();
-            var household = db.Household.Find(currentUser.HouseholdId);
-            var account = db.Account.Find(transactionID);
-            var model = new List<Transaction>();
-
+            var household = currentUser.Household;
             var transaction = db.Transaction.Find(transactionID);
+
+            if (household.Accounts.Any(x => x.Transactions.Any(t => t.Id == transaction.Id)))
+            { 
             transaction.IsActive = isActiveActionRequest;
             db.Entry(transaction).State = EntityState.Modified;
             db.SaveChanges();
-            if(transaction.IsActive == true)
+            }
+            else
             {
-                model = GetInActiveTransactions(transaction.AccountId);
+                return Content("Error");
+            }
+
+            if (transaction.IsActive == true)
+            {
+                return Content("Success");
             }
             else if(transaction.IsActive == false)
             {
-                model = GetActiveTransactions(transaction.AccountId);
+                return Content("Success");
             }
-            return PartialView("_DisplayTransactionsPartial", model);
+
+            //If we got this far something went wrong.
+            return Content("Error");
         }
 
         //AccountManage AJAX GET Action - returns partial view.
         public PartialViewResult _DisplayTransactionsPartial(int accounts)
         {
-            var currentUser = GetCurrentUser();
-            var household = db.Household.Find(currentUser.HouseholdId);
-            var account = db.Account.Find(accounts);
-            var transactionList = account.Transactions.Where(t => t.IsActive == true).OrderByDescending(t => t.Date).ToList();
-            ViewBag.TransactionsListTitle = "Transactions for : " + account.Name;
-            return PartialView("_DisplayTransactionsPartial", transactionList);
+            var model = GetActiveTransactions(accounts);
+            return PartialView("_DisplayTransactionsPartial", model);
         }
         public PartialViewResult DisplayArchivedTransactions(string id)
         {
@@ -318,6 +361,15 @@ namespace Budgeter.Controllers
 
             return PartialView("_AccountManageHeadPartial", account);
         }
+        public PartialViewResult _AccountBalancesPartial(string id)
+        {
+            int accountID = 0;
+            int.TryParse(id, out accountID);
+            var currentUser = GetCurrentUser();
+            var household = db.Household.Find(currentUser.HouseholdId);
+            var model = household.Accounts.First(x => x.Id == accountID);
+            return PartialView("_AccountBalancesPartial", model);
+        }
         public PartialViewResult _AddTransactionPartial(int accounts)
         {
             var model = GetAddTransactionModel(accounts);
@@ -330,10 +382,10 @@ namespace Budgeter.Controllers
             var account = db.Account.Find(accounts);
             var model = new Transaction();
             model.AccountId = account.Id;
-            ViewBag.CategoryId = new SelectList(account.Household.Categories, "Id", "Name", model.CategoryId);
-
+            ViewBag.CategoryId = new SelectList(account.Household.Categories.Where(x => x.IsActive == true), "Id", "Name", model.CategoryId);
             return model;
         }
+
 
         public PartialViewResult EditTransaction(string id)
         {
@@ -345,6 +397,85 @@ namespace Budgeter.Controllers
             return PartialView("_EditTransactionPartial", model);
         }
 
+        public ActionResult QuickAddTransaction()
+        {
+            var currentUser = GetCurrentUser();
+            
+            if(currentUser.Household != null && currentUser.Household.Accounts != null)
+            {
+                var model = GetQuickAddTransaction();
+                return PartialView("_QuickAddPartial", model);
+            }
+            else
+            {
+                return Content("Error");
+            }
+        }
+        public ActionResult UpdateTransactionManagerHead()
+        {
+            var currentUser = GetCurrentUser();
+            var household = db.Household.Find(currentUser.HouseholdId);
+            if (currentUser.HouseholdId != null)
+            {
+                ViewBag.Accounts = new SelectList(household.Accounts.Where(x => x.IsActive == true), "Id", "Name");
+                return PartialView("_TransactionsManagerDropdownPartial");
+            }
+            else
+            {
+                return Content("Error");
+            }
+        }
+
+
+        //POST : Transactions ####################
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult QuickAddTransaction([Bind(Include = "Id, Date, Description, Amount, IsReconciled, IsExpense, CategoryId, AccountId")]Transaction transaction)
+        {
+            var currentUser = GetCurrentUser();
+            var household = db.Household.Find(currentUser.HouseholdId);
+            var transactionAccount = db.Account.Find(transaction.AccountId);
+            ViewBag.CategoryId = new SelectList(household.Categories.Where(x => x.IsActive == true), "Id", "Name");
+            ViewBag.AccountId = new SelectList(household.Accounts.Where(x => x.IsActive == true), "Id", "Name");
+
+            if (ModelState.IsValid && transactionAccount.HouseholdId == household.Id)//protects againsts front end manipulation. Account/Household Comparison
+            {
+                if (transaction.Amount != 0)
+                {
+                    var newTransaction = new Transaction();
+                    if (transaction.IsExpense == true && transaction.Amount == Math.Abs(transaction.Amount) || transaction.Amount != Math.Abs(transaction.Amount))//checks for user input selection errors.
+                    {
+                        newTransaction.Amount = Math.Abs(transaction.Amount) * -1;
+                        newTransaction.IsExpense = true;
+                    }
+                    else
+                    {
+                        newTransaction.Amount = transaction.Amount;
+                        transaction.IsExpense = false;
+                    }
+
+                    newTransaction.AccountId = transaction.AccountId;
+                    newTransaction.CategoryId = transaction.CategoryId;
+                    newTransaction.Date = transaction.Date;
+                    newTransaction.Description = transaction.Description;
+                    newTransaction.EnteredById = currentUser.Id;
+                    newTransaction.IsActive = true;
+                    newTransaction.IsReconciled = transaction.IsReconciled;
+                    newTransaction.IsVoid = false;
+
+                    db.Transaction.Add(newTransaction);
+                    db.SaveChanges();
+                    return Content("Success");
+
+                }
+                else
+                {
+                    ModelState.AddModelError("Amount", "Error With Transaction Amount!");
+                    return PartialView("_QuickAddPartial", transaction);
+                }
+            }
+            return PartialView("_QuickAddPartial", transaction);
+        }
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult EditTransaction([Bind(Include ="Id, Date, Description, Amount, IsReconciled, IsExpense, CategoryId, AccountId" )]Transaction transaction)
@@ -360,16 +491,15 @@ namespace Budgeter.Controllers
                 db.Entry(currentTransaction).State = EntityState.Modified;
                 currentTransaction.Date = editedTransaction.Date;
                 currentTransaction.Description = editedTransaction.Description;
-                currentTransaction.Amount = editedTransaction.Amount;
+                currentTransaction.Amount = (currentTransaction.IsExpense != false || editedTransaction.Amount < 0) ? Math.Abs(editedTransaction.Amount)*-1 : Math.Abs(editedTransaction.Amount);
                 currentTransaction.IsReconciled = editedTransaction.IsReconciled;
                 currentTransaction.IsExpense = editedTransaction.IsExpense;
                 currentTransaction.CategoryId = editedTransaction.CategoryId;
                 db.SaveChanges();
+                return Content("Success");
             }
-
-            var model = GetTransactionModel(account.Id);
-
-            return PartialView("_EditTransactionPartial", model);
+            ViewBag.CategoryId = new SelectList(household.Categories.Where(x => x.IsActive == true), "Id", "Name", transaction.CategoryId);
+            return PartialView("_EditTransactionPartial", transaction);
         }
 
         private Transaction GetTransactionModel(int transactionID)
@@ -377,20 +507,49 @@ namespace Budgeter.Controllers
             var currentUser = GetCurrentUser();
             var household = db.Household.Find(currentUser.HouseholdId);
             var model = db.Transaction.Find(transactionID);
-            ViewBag.CategoryId = new SelectList(household.Categories, "Id", "Name", model.CategoryId);
+            ViewBag.CategoryId = new SelectList(household.Categories.Where(x => x.IsActive == true), "Id", "Name", model.CategoryId);
 
+            return model;
+        }
+        private Transaction GetQuickAddTransaction()
+        {
+            var currentUser = GetCurrentUser();
+            var household = db.Household.Find(currentUser.HouseholdId);
+            var model = new Transaction();
+            ViewBag.CategoryId = new SelectList(household.Categories.Where(x => x.IsActive == true), "Id", "Name");
+            ViewBag.AccountId = new SelectList(household.Accounts.Where(x => x.IsActive == true), "Id", "Name");
             return model;
         }
         //##############################################
         //##### START Budget ActionResults Section######
         //##############################################
 
-        public ActionResult BudgetManage()
+        public ActionResult MyManager()
         {
             var currentUser = GetCurrentUser();
             var household = db.Household.Find(currentUser.HouseholdId);
+            if(currentUser.HouseholdId != null)
+            {
+                ViewBag.Accounts = new SelectList(household.Accounts.Where(x => x.IsActive == true), "Id", "Name");
+                return View();
+            }
+            else
+            {
+                return RedirectToAction("Create", "Households");
+            }
+        }
+        public ActionResult DisplayActiveBudgets()
+        {
+            var model = GetActiveBudgets();
 
-            return View();
+            return PartialView("_DisplayBudgetsPartial", model);
+        }
+
+        public ActionResult DisplayInactiveBudgets()
+        {
+            var model = GetInactiveBudgets();
+
+            return PartialView("_DisplayBudgetsPartial", model);
         }
 
         public PartialViewResult _BudgetAddPartial()
@@ -409,20 +568,78 @@ namespace Budgeter.Controllers
             budget.HouseholdId = household.Id;
             budget.Amount = Math.Abs(budget.Amount);
             budget.IsActive = true;
-            db.BudgetItem.Add(budget);
-            await db.SaveChangesAsync();
+            if(!household.BudgetItems.Any(x=>x.CategoryId == budget.CategoryId) && ModelState.IsValid)
+            {
+                db.BudgetItem.Add(budget);
+                await db.SaveChangesAsync();
+                return Content("Success");
+            }
+            else if(household.BudgetItems.Any(x => x.CategoryId == budget.CategoryId) && ModelState.IsValid)
+            {
+                return Content("ErrorDuplicate");
+            }
+            else
+            {
+                GetNewBudgetItem();//gets select list needed for partial.
+                return PartialView("_BudgetAddPartial", budget);
+            }
 
-            return Content("Success");//Partials reloaded with .Load to avoid repopulating add budget with same data.
         }
 
-        public ActionResult DisplayActiveBudgets()
+        [HttpPost]
+        public ActionResult ActiveStatusToggleBudget(string id, string isActiveAction)
         {
-            var model = GetActiveBudgets();
+            int budgetId = 0;
+            int.TryParse(id, out budgetId);
+            var isActiveActionRequest = (isActiveAction == "true") ? true : false;
+            var currentUser = GetCurrentUser();
+            var household = db.Household.Find(currentUser.HouseholdId);
+            var budgetItem = db.BudgetItem.Find(budgetId);
 
-            return PartialView("_DisplayBudgetsPartial", model);
+            if (household.BudgetItems.Contains(budgetItem))
+            {
+                db.Entry(budgetItem).State = EntityState.Modified;
+                budgetItem.IsActive = isActiveActionRequest;
+                db.SaveChanges();
+                return Content("Success");
+            }
+
+            return Content("Error");
         }
 
+        public PartialViewResult EditBudget(string id)
+        {
+            int budgetId = 0;
+            int.TryParse(id, out budgetId);
 
+            var model = GetBudgetModel(budgetId);
+
+            return PartialView("_EditBudgetPartial", model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult EditBudget([Bind(Include = "Id, Amount, Name, CategoryId")]BudgetItem budgetItemForm)
+        {
+            var currentUser = GetCurrentUser();
+            var household = db.Household.Find(currentUser.HouseholdId);
+            var editedBudgetItem = budgetItemForm;
+            var Result = household.BudgetItems.Any(x=>x.Id == editedBudgetItem.Id);
+
+            if (ModelState.IsValid && Result)
+            {
+                var currentBudget = db.BudgetItem.Find(editedBudgetItem.Id);
+                db.Entry(currentBudget).State = EntityState.Modified;
+                currentBudget.Amount = editedBudgetItem.Amount;
+                currentBudget.Name = editedBudgetItem.Name;
+                currentBudget.CategoryId = editedBudgetItem.CategoryId;
+                db.SaveChanges();
+                return Content("Success");
+            }
+            ViewBag.CategoryId = new SelectList(household.Categories.Where(x => x.IsActive == true), "Id", "Name");
+            // if we got this far something went wrong
+            return PartialView("_EditBudgetPartial", budgetItemForm);
+        }
 
         //########################################
         //Budget Helpers START
@@ -433,25 +650,273 @@ namespace Budgeter.Controllers
 
             var model = new BudgetItem();
             model.HouseholdId = household.Id;
-            ViewBag.CategoryId = new SelectList(household.Categories, "Id", "Name", model.CategoryId);
+            ViewBag.CategoryId = new SelectList(household.Categories.Where(x => x.IsActive == true), "Id", "Name", model.CategoryId);
 
             return model;
         }
-
+        private BudgetItem GetBudgetModel(int budgetId)
+        {
+            var currentUser = GetCurrentUser();
+            var household = db.Household.Find(currentUser.HouseholdId);
+            var model = db.BudgetItem.FirstOrDefault(x => x.Id == budgetId);
+            ViewBag.CategoryId = new SelectList(household.Categories.Where(x => x.IsActive == true), "Id", "Name", model.CategoryId);
+            return model;
+        }
         private List<BudgetItem> GetActiveBudgets()
         {
             var currentUser = GetCurrentUser();
             var household = db.Household.Find(currentUser.HouseholdId);
-            ViewBag.BudgetsListTitle = "All Budgets for Household: " + household.Name;
+            ViewBag.BudgetsListTitle = "Active Budgets";
             var model = household.BudgetItems.Where(x => x.IsActive == true).ToList();
+
+            var categories = household.Categories;
+            //foreach (var item in model)
+            //{
+            //    item.SpentAmount
+            //}
+
+            //ViewData["BudgetData"] = 
+            return model;
+        }
+        private List<BudgetItem> GetInactiveBudgets()
+        {
+            var currentUser = GetCurrentUser();
+            var household = db.Household.Find(currentUser.HouseholdId);
+            ViewBag.BudgetsListTitle = "Archived/Inactive Budgets";
+            var model = household.BudgetItems.Where(x => x.IsActive == false).ToList();
 
             return model;
         }
 
-
         //########################################
         //### END Budget ActionResults Section ###
         //########################################
+
+        //############################################
+        //### START Category ActionResults Section ###
+        //############################################
+
+        public ActionResult GetAddCategoryPartial()
+        {
+
+            return PartialView("_CategoryAddPartial", new Category());
+        }
+
+        public ActionResult GetHouseholdCategoriesPartial()
+        {
+            var currentUser = GetCurrentUser();
+            var household = db.Household.Find(currentUser.HouseholdId);
+            ViewBag.CategoriesListTitle = "All Budget/Transaction Categories";
+            return PartialView("_DisplayCategories", household.Categories.OrderBy(x=>x.IsDefault).ToList());
+        }
+        public ActionResult EditCategory(int id)
+        {
+            var currentUser = GetCurrentUser();
+            var household = db.Household.Find(currentUser.HouseholdId);
+            var model = household.Categories.First(x => x.Id == id);
+            return PartialView("_EditCategoryPartial", model);
+        }
+
+        //Category Posts
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult EditCategory([Bind(Include ="Id, Name")] Category categoryForm)
+        {
+            var currentUser = GetCurrentUser();
+            var household = db.Household.Find(currentUser.HouseholdId);
+            var editedCategory = categoryForm;
+            var Result = household.Categories.Any(x => x.Id == editedCategory.Id);
+            var category = db.Category.Find(editedCategory.Id);
+
+            if (ModelState.IsValid && Result && category.IsDefault == false)
+            {
+                db.Entry(category).State = EntityState.Modified;
+                category.Name = editedCategory.Name;
+                db.SaveChanges();
+                return Content("Success");
+            }
+            else if (category.IsDefault == true)
+            {
+                return Content("Error:DefaultCategory");
+            }
+
+            return PartialView("_EditCategoryPartial", categoryForm);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult AddCategory([Bind(Include = "Name")] Category categoryAddForm)
+        {
+            var currentUser = GetCurrentUser();
+            var household = db.Household.Find(currentUser.HouseholdId);
+            var categoryToAdd = categoryAddForm;
+            
+            if (ModelState.IsValid)
+            {
+                Category newCategory = new Category();
+                newCategory.Name = categoryToAdd.Name;
+                newCategory.Households.Add(household);
+                newCategory.IsActive = true;
+                newCategory.IsExpense = true;
+                newCategory.IsDefault = false;
+                db.Category.Add(newCategory);
+                db.SaveChanges();
+                return Content("Success");
+            }
+
+            return PartialView("_CategoryAddPartial", categoryAddForm);
+        }
+        [HttpPost]
+        public ActionResult ActiveStatusToggleCategory(string id, string isActiveAction)
+        {
+            int categoryId = 0;
+            int.TryParse(id, out categoryId);
+            var isActiveActionRequest = (isActiveAction == "true") ? true : false;
+            var currentUser = GetCurrentUser();
+            var household = db.Household.Find(currentUser.HouseholdId);
+            var category = db.Category.First(x=>x.Id == categoryId);
+
+            if (household.Categories.Contains(category) && category.IsDefault == false)
+            {
+                db.Entry(category).State = EntityState.Modified;
+                category.IsActive = isActiveActionRequest;
+                db.SaveChanges();
+                return Content("Success");
+            }
+            else if(category.IsDefault == true)
+            {
+                return Content("Error:DefaultCategory");
+            }
+            return Content("Error");
+        }
+        //############################################
+        //###  END Category ActionResults Section  ###
+        //############################################
+
+        //############################################
+        //########  Start Accounts Section  ##########
+        //############################################
+
+        //Get Add Acount Partial
+        public ActionResult GetAddAccountPartial()
+        {
+            return PartialView("_AccountAddPartial", new AccountCreateVM());
+        }
+
+        //Get Active Accounts List Partial
+        public ActionResult GetAccountsListPartial()
+        {
+            var currentUser = GetCurrentUser();
+            var household = db.Household.Find(currentUser.HouseholdId);
+            var accounts = household.Accounts.Where(x=>x.IsActive == true).ToList();
+            @ViewBag.AccountsListTitle = "Active Accounts";
+            return PartialView("_DisplayAccountsPartial", accounts);
+        }
+        //Get Inactive Accounts List Partial
+        public ActionResult GetInactiveAccountsListPartial()
+        {
+            var currentUser = GetCurrentUser();
+            var household = db.Household.Find(currentUser.HouseholdId);
+            var accounts = household.Accounts.Where(x => x.IsActive == false).ToList();
+            @ViewBag.AccountsListTitle = "Inactive Accounts";
+            return PartialView("_DisplayAccountsPartial", accounts);
+        }
+        //Get Edit Account Modal
+        public ActionResult EditAccount(string id)
+        {
+            int accountId = 0;
+            int.TryParse(id, out accountId);
+            var model = GetAccountModel(accountId);
+            return PartialView("_EditAccountPartial", model);
+        }
+
+        //Post Add Account
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult SubmitAddAccountForm([Bind(Include ="Name, Balance")]AccountCreateVM account)
+        {
+            if (ModelState.IsValid)
+            {
+                var currentUser = GetCurrentUser();
+                var currentHousehold = db.Household.Find(currentUser.HouseholdId);
+                var newAccount = new Account();
+                newAccount.Name = account.Name;
+                newAccount.IsActive = true;
+                newAccount.HouseholdId = currentHousehold.Id;
+                db.Account.Add(newAccount);
+                db.SaveChanges();
+                if (account.Balance > 0)
+                {
+                    var newTransaction = new Transaction();
+                    newTransaction.AccountId = newAccount.Id;
+                    newTransaction.Amount = account.Balance;
+                    newTransaction.CategoryId = db.Category.FirstOrDefault(x => x.Name == "Income").Id;
+                    newTransaction.Date = DateTimeOffset.UtcNow;
+                    newTransaction.Description = "Account Starting Amount";
+                    newTransaction.EnteredById = currentUser.Id;
+                    newTransaction.IsActive = true;
+                    newTransaction.IsExpense = (account.Balance == Math.Abs(account.Balance) * -1) ? true : false;
+                    newTransaction.IsReconciled = true;
+                    newTransaction.IsVoid = false;
+                    db.Transaction.Add(newTransaction);
+                    db.SaveChanges();
+                }
+                return Content("Success");
+            }
+
+            //If we got this far something went wrong.
+            return PartialView("_AccountAddPartial", account);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult EditAccount([Bind(Include = "Id,IsActive,Name")] Account account)
+        {
+            if (ModelState.IsValid)
+            {
+                var currentUser = GetCurrentUser();
+                var currentHousehold = db.Household.Find(currentUser.HouseholdId);
+                var currentAccount = db.Account.Find(account.Id);
+                if (currentHousehold.Accounts.Contains(currentAccount))
+                {
+                    currentAccount.Name = account.Name;
+                    db.Entry(currentAccount).State = EntityState.Modified;
+                    db.SaveChanges();
+                }
+                return Content("Success");
+            }
+            return PartialView("_EditAccountPartial", account);
+        }
+        [HttpPost]
+        public ActionResult ActiveStatusToggleAccount(string id, string isActiveAction)
+        {
+            int accountId = 0;
+            int.TryParse(id, out accountId);
+            var isActiveActionRequest = (isActiveAction == "true") ? true : false;
+            var currentUser = GetCurrentUser();
+            var household = db.Household.Find(currentUser.HouseholdId);
+            var account = db.Account.First(x => x.Id == accountId);
+
+            if (household.Accounts.Contains(account))
+            {
+                db.Entry(account).State = EntityState.Modified;
+                account.IsActive = isActiveActionRequest;
+                db.SaveChanges();
+                return Content("Success");
+            }
+
+            return Content("Error");
+        }
+        //####### Accounts Helpers
+        private Account GetAccountModel(int accountId)
+        {
+            var currentUser = GetCurrentUser();
+            var currentHousehold = db.Household.Find(currentUser.HouseholdId);
+            var model = currentHousehold.Accounts.First(x=>x.Id == accountId);
+            return model;
+        }
+
+        //############################################
+        //#########  END Accounts Section  ###########
+        //############################################
 
         //######## Create Transaction #########
         //POST ACTION
@@ -462,6 +927,7 @@ namespace Budgeter.Controllers
             var currentUser = GetCurrentUser();
             var household = db.Household.Find(currentUser.HouseholdId);
             var transactionAccount = db.Account.Find(transaction.AccountId);
+            ViewBag.CategoryId = new SelectList(household.Categories.Where(x => x.IsActive == true), "Id", "Name");
 
             if (ModelState.IsValid && transactionAccount.HouseholdId == household.Id)//protects againsts front end manipulation. Account/Household Comparison
             {
@@ -470,12 +936,12 @@ namespace Budgeter.Controllers
                     var newTransaction = new Transaction();
                     if (transaction.IsExpense == true && transaction.Amount == Math.Abs(transaction.Amount) || transaction.Amount != Math.Abs(transaction.Amount))//checks for user input selection errors.
                     {
-                        newTransaction.Amount = Math.Abs(transaction.Amount) * -1;//removed.ReconciledAMount
+                        newTransaction.Amount = Math.Abs(transaction.Amount) * -1;
                         newTransaction.IsExpense = true;
                     }
                     else
                     {
-                        newTransaction.Amount = transaction.Amount;//removed.ReconciledAMount
+                        newTransaction.Amount = transaction.Amount;
                         transaction.IsExpense = false;
                     }
 
@@ -490,23 +956,16 @@ namespace Budgeter.Controllers
 
                     db.Transaction.Add(newTransaction);
                     db.SaveChanges();
-                    return RedirectToAction("AccountManage", "Saver", new { accounts = transactionAccount.Id });
+                    return Content("Success");
+
                 }
                 else
                 {
-                    ViewBag.AccountId = new SelectList(household.Accounts, "Id", "Name");
-                    ViewBag.CategoryId = new SelectList(db.Category.ToList(), "Id", "Name");
                     ModelState.AddModelError("Amount", "Error With Transaction Amount!");
-                    return RedirectToAction("Error", "Saver", new { error = "Error With Transaction Data, If you feel you reached this in error please contact support." });
+                    return PartialView("_AddTransactionPartial", transaction);
                 }
-
             }
-
-            ViewBag.AccountId = new SelectList(db.Account, "Id", "Name", transaction.AccountId);
-            ViewBag.CategoryId = new SelectList(db.Category, "Id", "Name", transaction.CategoryId);
-
-            return RedirectToAction("AccountManage", "Saver", new { accounts = transactionAccount.Id });
-
+            return PartialView("_AddTransactionPartial", transaction);
         }
         //######## End Account Manage Section #########
         //#############################################

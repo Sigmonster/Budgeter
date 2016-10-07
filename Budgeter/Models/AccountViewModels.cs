@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.Ajax.Utilities;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace Budgeter.Models
@@ -132,7 +133,7 @@ namespace Budgeter.Models
             this.ForgotPasswordViewModel = new ForgotPasswordViewModel();
             this.RegisterViewModel = new RegisterViewModel();
         }
-
+        public JSON particlejs { get; set; } 
         public LoginViewModel LoginViewModel { get; set; }
         public ForgotPasswordViewModel ForgotPasswordViewModel { get; set; }
         public RegisterViewModel RegisterViewModel { get; set; }

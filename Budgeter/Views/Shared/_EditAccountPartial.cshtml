@@ -1,0 +1,38 @@
+﻿@using Budgeter.Models
+@model Account
+
+
+
+@using (Html.BeginForm(null, null, FormMethod.Post, new { id = "editAccountFormModalFormId", action = "javascript:submitEditAccountForm()" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.Id)
+
+    <div class="form-horizontal">
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        <div class="form-group col-xs-11 center-block">
+            @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-12" })
+            <div class="col-md-12">
+                @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control", required = "required" } })
+                @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        @*<div class="form-group col-xs-11 center-block">
+            @Html.LabelFor(model => model.Balance, htmlAttributes: new { @class = "control-label col-md-12" })
+            <div class="col-md-12">
+                @Html.EditorFor(model => model.Balance, new { htmlAttributes = new { @class = "form-control", required = "required" } })
+                @Html.ValidationMessageFor(model => model.Balance, "", new { @class = "text-danger" })
+            </div>
+        </div>*@
+
+
+
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-success waves-effect waves-light">Save changes</button>
+        </div>
+    </div>
+}
+

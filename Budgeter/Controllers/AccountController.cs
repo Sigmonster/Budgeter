@@ -76,6 +76,8 @@ namespace Budgeter.Controllers
             {
                 return View(LoginGroupModel);
             }
+            //Login Demo Account
+            if (model.Email == "DemoTest@gmail.com") { model.Password = "Welcome123!"; } 
 
             // This doesn't count login failures towards account lockout
             // To enable password failures to trigger account lockout, change to shouldLockout: true

@@ -51,8 +51,10 @@ namespace Budgeter.Models
     public class HouseholdDetails
     {
         [Column("Created")]
+        [DisplayFormat(DataFormatString = "{0:o}", ApplyFormatInEditMode = true)]
         public DateTimeOffset? Created { get; set; }
         [Column("Updated")]
+        [DisplayFormat(DataFormatString = "{0:g}", ApplyFormatInEditMode = true)]
         public DateTimeOffset? Updated { get; set; }
         [Required]
         [StringLength(20, ErrorMessage = "Household Description must between 5 and 20 characters"), MinLength(5, ErrorMessage = "Household Description must between 5 and 20 characters")]
@@ -141,6 +143,7 @@ namespace Budgeter.Models
         [DisplayFormat(DataFormatString = "{0:g}", ApplyFormatInEditMode = true)]
         public DateTimeOffset Date { get; set; }
         [StringLength(25, ErrorMessage = "Transaction Description must between 5 and 20 characters"), MinLength(2, ErrorMessage = "Transaction Description must between 2 and 20 characters")]
+        [MaxLength(25, ErrorMessage = "Transaction Description must between 5 and 20 characters")]
         public string Description { get; set; }
         [Range(double.MinValue, double.MaxValue)]
         public decimal Amount { get; set; }
@@ -173,14 +176,36 @@ namespace Budgeter.Models
             this.BudgetItems = new HashSet<BudgetItem>();
             this.Households = new HashSet<Household>();
         }
-
+        [Key]
         public int Id { get; set; }
         public bool IsActive { get; set; }
         public bool IsDefault { get; set; }
         public bool IsExpense { get; set; }
+        //public int? BudgetItemId { get; set; }//FK
+        //[NotMapped]
+        //public decimal BudgetAmount
+        //{
+        //    get
+        //    {
+        //        return BudgetItems.First().Amount;
+        //    }
+        //    private set { }
+        //}
+        //[NotMapped]
+        //public decimal AmountSpentThisMonth
+        //{
+        //    get
+        //    {
+        //        return Transactions.Where(x => x.Date.Month == DateTime.Now.Month && x.Date.Year == DateTime.Now.Year).Sum(x => x.Amount);
+        //    }
+        //    private set { }
+        //}
+
         [Required]
         [StringLength(25, ErrorMessage = "Category Name must between 4 and 25 characters"), MinLength(4, ErrorMessage = "Category Name must between 4 and 25 characters")]
         public string Name { get; set; }
+
+        //public virtual BudgetItem BudgetItem { get; set; }
         public virtual ICollection<Household> Households { get; set; }
         public virtual ICollection<Transaction> Transactions { get; set; }
         public virtual ICollection<BudgetItem> BudgetItems { get; set; }
@@ -250,6 +275,25 @@ namespace Budgeter.Models
         [Required]
         [StringLength(20, ErrorMessage = "Budget Item Name must between 5 and 20 characters"), MinLength(5, ErrorMessage = "Budget Item Name must between 5 and 20 characters")]
         public string Name { get; set; }
+        [NotMapped]
+        public decimal SpentPercentage
+        {
+            get
+            {
+                if (Category != null)
+                {
+                    var TransactionTotal = Category.Transactions.Where(x => x.Date.Month == DateTime.Now.Month && x.Date.Year == DateTime.Now.Year && x.Account.HouseholdId == HouseholdId && x.IsActive == true && x.IsVoid == false).Sum(x => x.Amount);
+                    var percentage = Math.Abs(TransactionTotal / Amount) * 100;
+                    return Math.Round(percentage, 2);
+                }
+                else
+                {
+                    return 0;
+                }
+                
+            }
+            private set { }
+        }
 
         //FKs
         public int CategoryId { get; set; }

@@ -1,0 +1,46 @@
+﻿@using Budgeter.Models
+@model List<ApplicationUser>
+
+<div class="panel-heading">
+    <div class="text-center">
+        <h3>Household Members</h3>
+        <hr />
+    </div>
+</div>
+<div class="panel-wrapper collapse in">
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>User</th>
+                    @*<th>Email</th>*@
+                    <th>House Role</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+            {
+                    <tr>
+                        <td>@item.DisplayName</td>
+                        @*<td>@item.Email</td>*@
+                        <td>
+                            <div class="center-label">
+                                @if (item.Household.OwnerUserId != item.Id)
+                                {
+                                    <div class="label label-table label-success">Member</div>
+                                }
+                                else if (item.Household.OwnerUserId == item.Id)
+                                {
+                                    <div class="label label-table label-info" style="padding-right: 25px;padding-left: 24px;">Head</div>
+                                }
+                            </div>
+                        </td>
+                    </tr>
+
+
+                }
+
+            </tbody>
+        </table>
+    </div>
+</div>

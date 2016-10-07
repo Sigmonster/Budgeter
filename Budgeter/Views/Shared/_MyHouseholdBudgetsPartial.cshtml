@@ -1,0 +1,52 @@
+﻿@using Budgeter.Models
+@model List<BudgetItem>
+
+
+<div class="panel-heading">
+    <div class="text-center">
+        <div class="pull-left">
+        </div>
+        <h3>Monthly Budget Progress</h3>
+        <hr />
+    </div>
+</div>
+
+<div class="panel-wrapper collapse in">
+
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Monthly Progress</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+            {
+                    <tr>
+                        <td>
+                            @item.Name
+                        </td>
+                        <td>
+                            @if (item.SpentPercentage <= 100)
+                            {
+                                <div class="progress progress-lg">
+                                    <div class="progress-bar progress-bar-success" role="progressbar" style="width: @item.SpentPercentage%; role=" progressbar""> @item.SpentPercentage% </div>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="progress progress-lg">
+                                    <div class="progress-bar progress-bar-danger" role="progressbar" style="width: 100%; role=" progressbar""> @item.SpentPercentage% </div>
+                                </div>
+                            }
+
+                        </td>
+                    </tr>
+                }
+               
+            </tbody>
+        </table>
+    </div>
+</div>

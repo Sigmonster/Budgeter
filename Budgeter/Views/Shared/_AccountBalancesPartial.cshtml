@@ -1,0 +1,11 @@
+﻿@using Budgeter.Models
+@model Account
+
+<div class="col-md-6">
+    <h4><b>Available Balance: </b><span>@Model.Balance</span></h4>
+    <input type="number" id="AccBalance" style="display:none;" value="@Model.Balance" />
+</div>
+<div class="col-md-6">
+    <h4><b>Reconciled Balance: </b><span>@Model.ReconciledBalance</span></h4>
+    <input type="number" id="RecBalance" style="display:none;" value="@Model.ReconciledBalance" />
+</div>

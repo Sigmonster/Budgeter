@@ -122,26 +122,26 @@ namespace Budgeter.Controllers
 
                 db.Entry(household).State = EntityState.Modified;
                 
-                for(int i=0; i < invitations.Length; i++)
-                {
-                    var emailInvitee = invitations[i].ToString();
-                    if (household.Members.Where(u => u.Email.ToLower() == emailInvitee.ToLower()).Count() == 0)
-                    {
-                        var result1 = household.InvitedRegisteredUsers.Where(u => u.Email.ToLower() == emailInvitee.ToLower()).Count();
-                        var result2 = db.Users.Where(u => u.Email.ToLower() == emailInvitee.ToLower()).Count();
-                        var result3 = household.InvitedNotRegisteredEmail.Where(u => u.Email.ToLower() == emailInvitee.ToLower() && u.HouseholdId == household.Id).Count();
-                        if (result1 == 0  && result2 == 1)
-                        {
-                            var userInvitee = db.Users.FirstOrDefault(u => u.Email == emailInvitee);
-                            appHelper.AddRegisteredInvitation(userInvitee, household.Id);
-                        }
-                        else if(result3 == 0 && result2 == 0)
-                        {
-                            appHelper.AddNonRegisteredInvitation(emailInvitee, household.Id);
-                        }
+                //for(int i=0; i < invitations.Length; i++)
+                //{
+                //    var emailInvitee = invitations[i].ToString();
+                //    if (household.Members.Where(u => u.Email.ToLower() == emailInvitee.ToLower()).Count() == 0)
+                //    {
+                //        var result1 = household.InvitedRegisteredUsers.Where(u => u.Email.ToLower() == emailInvitee.ToLower()).Count();
+                //        var result2 = db.Users.Where(u => u.Email.ToLower() == emailInvitee.ToLower()).Count();
+                //        var result3 = household.InvitedNotRegisteredEmail.Where(u => u.Email.ToLower() == emailInvitee.ToLower() && u.HouseholdId == household.Id).Count();
+                //        if (result1 == 0  && result2 == 1)
+                //        {
+                //            var userInvitee = db.Users.FirstOrDefault(u => u.Email == emailInvitee);
+                //            appHelper.AddRegisteredInvitation(userInvitee, household.Id);
+                //        }
+                //        else if(result3 == 0 && result2 == 0)
+                //        {
+                //            appHelper.AddNonRegisteredInvitation(emailInvitee, household.Id);
+                //        }
 
-                    }
-                }
+                //    }
+                //}
 
                 db.SaveChanges();
 

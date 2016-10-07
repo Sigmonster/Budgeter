@@ -59,7 +59,7 @@ namespace Budgeter.Models
     public class AccountCreateVM
     {
         [Required]
-        [StringLength(30)]
+        [StringLength(20)]
         public string Name { get; set; }
         [Required]
         [Range(double.MinValue, double.MaxValue)]
